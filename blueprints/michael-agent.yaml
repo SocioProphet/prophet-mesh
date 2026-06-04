@@ -1,0 +1,41 @@
+name: michael-agent
+archetype: michael
+version: 0.1.0
+principal: principal:socioprophet
+motive: instantiate Michael Agent as Prophet Mesh
+edition: michael-agent
+state_channels:
+  - belief_state
+  - evidence_packet
+  - causal_attribution_delta
+  - counterexample
+  - equation_candidate
+  - human_digital_twin_state
+au_bundles:
+  - state
+  - cap
+  - net
+  - id
+  - time
+  - policy
+capabilities:
+  - name: evidence_intake
+    description: Ingest, normalize, and cite evidence packets.
+    evidence_required: true
+    policy_gate: evidence.default
+  - name: causal_mapping
+    description: Produce causal attribution deltas across claims, plans, and incidents.
+    evidence_required: true
+    policy_gate: reasoning.causal
+  - name: counterexample_search
+    description: Search for disconfirming evidence and contradiction pressure.
+    evidence_required: true
+    policy_gate: reasoning.adversarial
+  - name: governed_action_planning
+    description: Generate executable plans constrained by policy, motive, and attestation.
+    evidence_required: true
+    policy_gate: action.plan
+premium_customization:
+  customer_surface: fixed
+  allowed: false
+  note: Michael is the canonical reference agent and product flagship.
