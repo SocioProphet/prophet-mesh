@@ -1,0 +1,46 @@
+{
+  "customer": {
+    "organization": "Unsafe Example Customer"
+  },
+  "agent_surface": {
+    "requested_agent_name": "Unsafe Automation Agent"
+  },
+  "workflows": {
+    "target": [
+      "execute production changes without approval"
+    ],
+    "excluded": []
+  },
+  "authority": {
+    "human_approval_required": [],
+    "recommend_only": [],
+    "execute_after_approval": [
+      "modify identity provider policy"
+    ],
+    "never_delegated": []
+  },
+  "memory": {
+    "approved_sources": [],
+    "customer_data_to_canonical_michael_state": false
+  },
+  "connectors": [
+    {
+      "name": "production-admin"
+    }
+  ],
+  "policy": {
+    "identity_required": true,
+    "evidence_required": false,
+    "attestation_required": true,
+    "revocation_required": false,
+    "audit_required": true,
+    "lifecycle_semantics_required": true
+  },
+  "deployment": {
+    "topology": "managed"
+  },
+  "evaluation": {
+    "benchmark_tasks": [],
+    "acceptance_criteria": []
+  }
+}
