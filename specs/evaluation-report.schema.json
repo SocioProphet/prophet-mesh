@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.socioprophet.dev/prophet-mesh/evaluation-report.schema.json",
+  "title": "Prophet Mesh Evaluation Report",
+  "type": "object",
+  "required": ["agent", "suite", "tasks", "summary", "trust_kernel"],
+  "properties": {
+    "agent": {
+      "type": "object",
+      "required": ["name", "edition", "archetype"],
+      "properties": {
+        "name": {"type": "string"},
+        "edition": {"type": "string"},
+        "archetype": {"enum": ["michael", "michael-derived"]}
+      }
+    },
+    "suite": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"type": "string"}
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "prompt", "expected_behavior", "result"],
+        "properties": {
+          "id": {"type": "string"},
+          "prompt": {"type": "string"},
+          "expected_behavior": {"type": "string"},
+          "result": {
+            "type": "object",
+            "required": [
+              "passed",
+              "material_claims_cited",
+              "evidence_packet_present",
+              "policy_decision",
+              "lifecycle_event_present",
+              "contradiction_handled"
+            ],
+            "properties": {
+              "passed": {"const": true},
+              "material_claims_cited": {"const": true},
+              "evidence_packet_present": {"const": true},
+              "policy_decision": {"enum": ["allow", "deny", "requires_approval"]},
+              "lifecycle_event_present": {"const": true},
+              "contradiction_handled": {"const": true}
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_tasks", "passed_tasks", "failed_tasks"],
+      "properties": {
+        "total_tasks": {"type": "integer", "minimum": 1},
+        "passed_tasks": {"type": "integer", "minimum": 0},
+        "failed_tasks": {"type": "integer", "minimum": 0}
+      }
+    },
+    "trust_kernel": {
+      "type": "object",
+      "required": [
+        "identity_preserved",
+        "policy_preserved",
+        "evidence_preserved",
+        "attestation_preserved",
+        "revocation_preserved",
+        "audit_preserved"
+      ],
+      "properties": {
+        "identity_preserved": {"const": true},
+        "policy_preserved": {"const": true},
+        "evidence_preserved": {"const": true},
+        "attestation_preserved": {"const": true},
+        "revocation_preserved": {"const": true},
+        "audit_preserved": {"const": true}
+      }
+    }
+  }
+}
