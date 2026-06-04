@@ -1,0 +1,49 @@
+name: premium-customer-agent
+archetype: michael-derived
+version: 0.1.0
+principal: principal:customer
+motive: instantiate a customer-specific agent without weakening the Michael trust kernel
+edition: premium-custom-agent
+state_channels:
+  - belief_state
+  - evidence_packet
+  - causal_attribution_delta
+  - counterexample
+  - equation_candidate
+  - human_digital_twin_state
+au_bundles:
+  - state
+  - cap
+  - net
+  - id
+  - time
+  - policy
+capabilities:
+  - name: domain_memory_recall
+    description: Retrieve customer-approved domain memory with provenance.
+    evidence_required: true
+    policy_gate: memory.customer_scope
+  - name: workflow_execution_plan
+    description: Produce policy-bound execution plans for customer workflows.
+    evidence_required: true
+    policy_gate: action.customer_workflow
+  - name: executive_synthesis
+    description: Summarize state, risk, and next actions for customer operators.
+    evidence_required: true
+    policy_gate: synthesis.executive
+premium_customization:
+  customer_surface: customizable
+  configurable:
+    - agent_name
+    - domain_vocabulary
+    - memory_connectors
+    - tool_allowlist
+    - policy_overrides_more_restrictive_only
+    - deployment_topology
+  non_configurable:
+    - identity
+    - evidence
+    - attestation
+    - revocation
+    - audit
+    - lifecycle_semantics
