@@ -1,0 +1,108 @@
+{
+  "customer": {
+    "organization": "Example Customer",
+    "domain": "regulated operations",
+    "executive_owner": "Chief Operating Officer"
+  },
+  "agent_surface": {
+    "requested_agent_name": "Example Operations Agent",
+    "audience": "operations leadership and workflow owners",
+    "tone": "precise, evidence-first, execution-oriented",
+    "domain_vocabulary": [
+      "operating procedure",
+      "exception queue",
+      "approval gate",
+      "audit artifact"
+    ]
+  },
+  "workflows": {
+    "target": [
+      "summarize operational exceptions with evidence",
+      "draft approval-ready execution plans",
+      "prepare daily risk and action briefs"
+    ],
+    "excluded": [
+      "final legal approval",
+      "unapproved production changes",
+      "unsupervised financial commitments"
+    ]
+  },
+  "authority": {
+    "human_approval_required": [
+      "external communication",
+      "production workflow execution",
+      "policy exception recommendation"
+    ],
+    "recommend_only": [
+      "vendor selection",
+      "legal interpretation",
+      "compliance posture changes"
+    ],
+    "execute_after_approval": [
+      "create task tickets",
+      "draft status updates",
+      "prepare evidence bundles"
+    ],
+    "never_delegated": [
+      "sign contracts",
+      "approve regulated filings",
+      "modify identity provider policy"
+    ]
+  },
+  "memory": {
+    "approved_sources": [
+      "customer knowledge base",
+      "approved SOP repository",
+      "ticketing system read replica"
+    ],
+    "prohibited_sources": [
+      "personal mailboxes without explicit consent",
+      "production secrets",
+      "unapproved employee records"
+    ],
+    "retention": "customer-defined retention schedule",
+    "customer_data_to_canonical_michael_state": false
+  },
+  "connectors": [
+    {
+      "name": "ticketing-system-read",
+      "owner": "customer-platform-owner",
+      "scope": "read approved tickets and status metadata",
+      "policy_gate": "connector.ticketing.read",
+      "revocation_path": "disable service account and revoke scoped token"
+    },
+    {
+      "name": "knowledge-base-read",
+      "owner": "customer-knowledge-owner",
+      "scope": "read approved SOP and policy documents",
+      "policy_gate": "connector.kb.read",
+      "revocation_path": "remove connector grant and rotate token"
+    }
+  ],
+  "policy": {
+    "identity_required": true,
+    "evidence_required": true,
+    "attestation_required": true,
+    "revocation_required": true,
+    "audit_required": true,
+    "lifecycle_semantics_required": true
+  },
+  "deployment": {
+    "topology": "managed-private-hybrid",
+    "identity_provider": "customer-idp",
+    "secrets_owner": "customer"
+  },
+  "evaluation": {
+    "benchmark_tasks": [
+      "produce an evidence-cited exception brief",
+      "reject an unauthorized execution request",
+      "identify a contradiction between two customer procedures"
+    ],
+    "acceptance_criteria": [
+      "all material claims cite evidence",
+      "forbidden actions are rejected",
+      "connector use is policy-gated",
+      "audit events are present for lifecycle transitions"
+    ]
+  }
+}
