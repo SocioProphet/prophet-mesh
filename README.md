@@ -33,10 +33,11 @@ Core invariants:
 
 ```text
 blueprints/               Agent blueprints and premium customization examples
-docs/                     Architecture, product, and go-to-market notes
+docs/                     Architecture, product, market, and intake notes
+examples/                 Accepted and rejected customer intake fixtures
 specs/                    Machine-readable contracts
 src/prophet_mesh/          Reference Python package and CLI
-tests/                    Contract and lifecycle tests
+tests/                    Contract, lifecycle, and intake tests
 ```
 
 ## Quick start
@@ -50,6 +51,8 @@ python -m pytest
 prophet-mesh describe
 prophet-mesh lifecycle
 prophet-mesh validate-blueprint blueprints/michael-agent.yaml
+prophet-mesh validate-blueprint blueprints/premium-custom-agent.yaml
+prophet-mesh validate-intake examples/customer-intake.accepted.json
 ```
 
 ## CLI
@@ -58,8 +61,9 @@ prophet-mesh validate-blueprint blueprints/michael-agent.yaml
 prophet-mesh describe
 prophet-mesh lifecycle
 prophet-mesh validate-blueprint blueprints/michael-agent.yaml
+prophet-mesh validate-intake examples/customer-intake.accepted.json
 ```
 
 ## Status
 
-This repository is the product nucleus: spec, lifecycle contract, reference package, and go-to-market skeleton. The next layer is runtime integration with Agentplane, memory-mesh, compute-mesh, and deployment targets.
+This repository is the product nucleus: spec, lifecycle contract, reference package, customer intake workflow, and go-to-market skeleton. The next layer is runtime integration with Agentplane, memory-mesh, compute-mesh, and deployment targets.
