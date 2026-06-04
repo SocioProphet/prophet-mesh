@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from prophet_mesh.contracts import AgentBlueprint
+from prophet_mesh.intake import validate_intake_file
 from prophet_mesh.lifecycle import LIFECYCLE
 
 DESCRIPTION = "Prophet Mesh: the distributed instantiation of the Michael Agent."
@@ -39,6 +40,12 @@ def _cmd_validate_blueprint(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_validate_intake(args: argparse.Namespace) -> int:
+    result = validate_intake_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="prophet-mesh", description=DESCRIPTION)
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -49,9 +56,16 @@ def build_parser() -> argparse.ArgumentParser:
     lifecycle = subcommands.add_parser("lifecycle", help="print the canonical swarm lifecycle")
     lifecycle.set_defaults(func=_cmd_lifecycle)
 
-    validate = subcommands.add_parser("validate-blueprint", help="validate an agent blueprint")
-    validate.add_argument("path")
-    validate.set_defaults(func=_cmd_validate_blueprint)
+    validate_blueprint = subcommands.add_parser("validate-blueprint", help="validate an agent blueprint")
+    validate_blueprint.add_argument("path")
+    validate_blueprint.set_defaults(func=_cmd_validate_blueprint)
+
+    validate_intake = subcommands.add_parser(
+        "validate-intake",
+        help="validate a premium customer intake artifact",
+    )
+    validate_intake.add_argument("path")
+    validate_intake.set_defaults(func=_cmd_validate_intake)
     return parser
 
 
