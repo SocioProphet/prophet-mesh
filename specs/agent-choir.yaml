@@ -1,0 +1,159 @@
+name: prophet-mesh-agent-choir
+version: 0.1.0
+product: Prophet Mesh
+primary_repo: SocioProphet/prophet-mesh
+primary_conductor: Michael Agent
+commercial_model: named customer conductors and composable agent choirs derived from the same trust kernel
+
+invariants:
+  - conductor_first_experience
+  - agent_choir_not_single_agent
+  - single_model_router_interface
+  - relationship_aware_memory
+  - customer_named_conductors
+  - open_mesh_model_family
+  - trust_kernel_inherited
+  - no_trust_kernel_bypass
+
+trust_kernel:
+  - identity
+  - policy
+  - evidence
+  - attestation
+  - revocation
+  - audit
+
+conductor:
+  default: Michael Agent
+  role: primary relationship surface, clarifier, router, delegator, synthesizer, and trusted advisor
+  responsibilities:
+    - chat_and_clarify
+    - maintain_relationship_context
+    - maintain_operator_preferences
+    - route_to_models_and_agents
+    - delegate_to_specialists
+    - synthesize_choir_outputs
+    - enforce_authority_boundaries
+    - preserve_trust_kernel
+  customizable_surface:
+    - tone
+    - communication_style
+    - domain_vocabulary
+    - user_interface
+    - customer_agent_name
+    - workflow_language
+  non_configurable_controls:
+    - identity
+    - evidence
+    - policy
+    - attestation
+    - revocation
+    - audit
+    - lifecycle_semantics
+
+choir_roles:
+  - id: memory-steward
+    label: Memory Steward
+    layer: memory
+    canonical_repos:
+      - SocioProphet/memory-mesh
+      - SocioProphet/hellgraph
+    purpose: Maintain relational, project, preference, and evidence memory boundaries.
+  - id: router-agent
+    label: Router Agent
+    layer: model_router
+    canonical_repos:
+      - SocioProphet/model-router
+      - SocioProphet/functional-model-surfaces
+    purpose: Select model, tool, and agent pathways through a single router interface.
+  - id: research-agent
+    label: Research Agent
+    layer: agent_orchestration
+    canonical_repos:
+      - SocioProphet/agentplane
+      - SocioProphet/sherlock-search
+    purpose: Find, normalize, and cite source material.
+  - id: planning-agent
+    label: Planning Agent
+    layer: agent_orchestration
+    canonical_repos:
+      - SocioProphet/agentplane
+      - SocioProphet/prophet-platform
+    purpose: Produce plans, milestones, risk registers, and action boundaries.
+  - id: writing-agent
+    label: Writing Agent
+    layer: agent_orchestration
+    canonical_repos:
+      - SocioProphet/holmes
+      - SocioProphet/Noetica
+    purpose: Produce reusable written artifacts and narrative synthesis.
+  - id: coding-agent
+    label: Coding Agent
+    layer: agent_orchestration
+    canonical_repos:
+      - SocioProphet/agentplane
+      - SocioProphet/prophet-platform
+    purpose: Produce code, tests, repository changes, and implementation plans.
+  - id: analytics-agent
+    label: Analytics Agent
+    layer: agent_orchestration
+    canonical_repos:
+      - SocioProphet/prophet-platform-fabric-mlops-ts-suite
+      - SocioProphet/model-governance-ledger
+    purpose: Evaluate metrics, traces, decisions, and evidence quality.
+  - id: operations-agent
+    label: Operations Agent
+    layer: agent_orchestration
+    canonical_repos:
+      - SocioProphet/prophet-platform
+      - SocioProphet/agent-inbox
+    purpose: Coordinate workflows, tickets, deployments, and runbooks.
+  - id: creative-agent
+    label: Creative Agent
+    layer: agent_orchestration
+    canonical_repos:
+      - SocioProphet/Noetica
+      - SocioProphet/holmes
+    purpose: Produce design, visual, creative, and conceptual artifacts.
+  - id: governance-sentinel
+    label: Governance Sentinel
+    layer: trust_governance
+    canonical_repos:
+      - SocioProphet/guardrail-fabric
+      - SocioProphet/model-governance-ledger
+    purpose: Enforce identity, policy, evidence, attestation, revocation, and audit.
+
+router_interface:
+  canonical_repo: SocioProphet/model-router
+  responsibility: expose one stable interface across local models, open models, fine-tuned models, domain models, customer models, tools, and specialist agents
+  routes:
+    - local_models
+    - open_models
+    - fine_tuned_models
+    - domain_models
+    - customer_models
+    - specialist_agents
+    - tools
+    - workflows
+
+premium_derived_agents:
+  enabled: true
+  model: organizations can create named conductor agents and choirs from the Michael-derived trust kernel
+  customer_controls:
+    - conductor_name
+    - conductor_voice
+    - domain_memory
+    - specialist_agent_roster
+    - tool_allowlist
+    - model_allowlist
+    - workflow_catalog
+    - deployment_topology
+  required_controls:
+    - identity
+    - evidence
+    - policy
+    - attestation
+    - revocation
+    - audit
+    - tenant_isolation
+    - evaluation_report
