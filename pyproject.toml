@@ -22,6 +22,9 @@ prophet-mesh = "prophet_mesh.cli:main"
 [tool.hatch.build.targets.wheel]
 packages = ["src/prophet_mesh"]
 
+[tool.hatch.build.targets.editable]
+packages = ["src/prophet_mesh"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
