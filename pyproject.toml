@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "prophet-mesh"
+version = "0.1.0"
+description = "Distributed instantiation of the Michael Agent: governed agent mesh, lifecycle compositions, and premium custom agents."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+authors = [{ name = "SocioProphet" }]
+keywords = ["agents", "mesh", "swarm", "michael-agent", "governance", "attestation"]
+dependencies = ["PyYAML>=6.0.2"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+prophet-mesh = "prophet_mesh.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/prophet_mesh"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
