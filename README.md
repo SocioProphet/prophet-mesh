@@ -45,8 +45,11 @@ tests/                    Contract and lifecycle tests
 python3 -m venv .venv
 . .venv/bin/activate
 python -m pip install -e '.[dev]'
+python -m ruff check src tests
+python -m pytest
 prophet-mesh describe
-pytest
+prophet-mesh lifecycle
+prophet-mesh validate-blueprint blueprints/michael-agent.yaml
 ```
 
 ## CLI
