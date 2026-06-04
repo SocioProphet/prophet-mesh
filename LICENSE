@@ -1,0 +1,6 @@
+Copyright (c) SocioProphet. All rights reserved.
+
+This repository is proprietary unless and until a separate license is published.
+No rights are granted to copy, modify, distribute, sublicense, deploy, or use this work in production without written authorization from SocioProphet.
+
+Customer-specific agent packages must be governed by a signed commercial agreement and must preserve the Prophet Mesh trust-kernel invariants: identity, policy, evidence, lifecycle auditability, revocation, and attestation.
