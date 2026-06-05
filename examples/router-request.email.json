@@ -1,0 +1,10 @@
+{
+  "request_id": "req-router-dry-run-001",
+  "conductor_id": "michael-agent",
+  "principal": "principal:socioprophet",
+  "task": "email_reply",
+  "domain": "communications",
+  "intent": "draft a relationship-aware email reply with evidence and approval boundaries",
+  "memory_scope": "relationship_context:approved",
+  "privacy_mode": "hosted_allowed"
+}
