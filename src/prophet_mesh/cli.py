@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from prophet_mesh.choir import validate_choir_spec_file
+from prophet_mesh.choir_plan import validate_choir_plan_file
 from prophet_mesh.contracts import AgentBlueprint
 from prophet_mesh.evaluation import validate_evaluation_report_file
 from prophet_mesh.intake import validate_intake_file
@@ -62,6 +63,12 @@ def _cmd_validate_evaluation(args: argparse.Namespace) -> int:
 
 def _cmd_validate_choir(args: argparse.Namespace) -> int:
     result = validate_choir_spec_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
+def _cmd_validate_choir_plan(args: argparse.Namespace) -> int:
+    result = validate_choir_plan_file(Path(args.path))
     print(json.dumps(result.to_dict(), indent=2))
     return 0 if result.valid else 1
 
@@ -130,6 +137,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_choir.add_argument("path")
     validate_choir.set_defaults(func=_cmd_validate_choir)
+
+    validate_choir_plan = subcommands.add_parser(
+        "validate-choir-plan",
+        help="validate a Prophet Mesh choir execution plan",
+    )
+    validate_choir_plan.add_argument("path")
+    validate_choir_plan.set_defaults(func=_cmd_validate_choir_plan)
 
     validate_repo_state = subcommands.add_parser(
         "validate-repo-state",
