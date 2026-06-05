@@ -11,6 +11,7 @@ from prophet_mesh.contracts import AgentBlueprint
 from prophet_mesh.evaluation import validate_evaluation_report_file
 from prophet_mesh.intake import validate_intake_file
 from prophet_mesh.lifecycle import LIFECYCLE
+from prophet_mesh.repo_state import validate_repo_state_file
 
 DESCRIPTION = "Prophet Mesh: the distributed instantiation of the Michael Agent."
 
@@ -61,6 +62,12 @@ def _cmd_validate_choir(args: argparse.Namespace) -> int:
     return 0 if result.valid else 1
 
 
+def _cmd_validate_repo_state(args: argparse.Namespace) -> int:
+    result = validate_repo_state_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="prophet-mesh", description=DESCRIPTION)
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -95,6 +102,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_choir.add_argument("path")
     validate_choir.set_defaults(func=_cmd_validate_choir)
+
+    validate_repo_state = subcommands.add_parser(
+        "validate-repo-state",
+        help="validate the Prophet Mesh repo-state architecture spec",
+    )
+    validate_repo_state.add_argument("path")
+    validate_repo_state.set_defaults(func=_cmd_validate_repo_state)
     return parser
 
 
