@@ -1,4 +1,4 @@
-.PHONY: install test lint describe validate validate-intake validate-choir validate-choir-plan validate-evaluation validate-repo-state validate-router validate-model-policy validate-router-decision dry-run-router
+.PHONY: install test lint describe validate validate-intake validate-choir validate-choir-plan validate-conductor-response validate-evaluation validate-repo-state validate-router validate-model-policy validate-router-decision dry-run-router
 
 install:
 	python -m pip install -e '.[dev]'
@@ -24,6 +24,8 @@ validate:
 	prophet-mesh dry-run-router examples/router-request.email.json
 	prophet-mesh validate-choir-plan examples/choir-execution-plan.accepted.json
 	! prophet-mesh validate-choir-plan examples/choir-execution-plan.rejected.json
+	prophet-mesh validate-conductor-response examples/conductor-response.accepted.json
+	! prophet-mesh validate-conductor-response examples/conductor-response.rejected.json
 	prophet-mesh validate-intake examples/customer-intake.accepted.json
 	! prophet-mesh validate-intake examples/customer-intake.rejected.json
 	prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
@@ -39,6 +41,10 @@ validate-choir:
 validate-choir-plan:
 	prophet-mesh validate-choir-plan examples/choir-execution-plan.accepted.json
 	! prophet-mesh validate-choir-plan examples/choir-execution-plan.rejected.json
+
+validate-conductor-response:
+	prophet-mesh validate-conductor-response examples/conductor-response.accepted.json
+	! prophet-mesh validate-conductor-response examples/conductor-response.rejected.json
 
 validate-evaluation:
 	prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
