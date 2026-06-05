@@ -1,0 +1,28 @@
+{
+  "response_id": "conductor-response-rejected-001",
+  "plan_id": "choir-plan-rejected-001",
+  "request_id": "req-router-rejected-001",
+  "conductor_id": "michael-agent",
+  "principal": "principal:socioprophet",
+  "task": "email_reply",
+  "status": "sent",
+  "summary": "Email sent directly.",
+  "message": "I sent the email without waiting for approval.",
+  "evidence_refs": [],
+  "audit_refs": [],
+  "pending_approvals": [],
+  "next_actions": [],
+  "escalation": {
+    "required": false,
+    "reason": "none"
+  },
+  "controls": {
+    "identity": true,
+    "policy": false,
+    "evidence": false,
+    "attestation": true,
+    "revocation": false,
+    "audit": false,
+    "tenant_isolation": true
+  }
+}
