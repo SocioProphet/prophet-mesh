@@ -1,0 +1,53 @@
+{
+  "plan_id": "choir-plan-accepted-001",
+  "request_id": "req-router-accepted-001",
+  "conductor_id": "michael-agent",
+  "principal": "principal:socioprophet",
+  "task": "email_reply",
+  "domain": "communications",
+  "policy_decision": "requires_approval",
+  "router_decision_ref": "examples/router-decision.accepted.json",
+  "summary": "Draft a relationship-aware email reply, preserve evidence, and require approval before sending.",
+  "steps": [
+    {
+      "step_id": "step-001-memory-context",
+      "agent": "memory-steward",
+      "action": "load approved relationship context",
+      "requires_approval": false,
+      "evidence_required": true,
+      "audit_required": true
+    },
+    {
+      "step_id": "step-002-draft-reply",
+      "agent": "writing-agent",
+      "action": "draft email reply with relationship context and evidence boundaries",
+      "requires_approval": false,
+      "evidence_required": true,
+      "audit_required": true
+    },
+    {
+      "step_id": "step-003-governance-review",
+      "agent": "governance-sentinel",
+      "action": "verify approval boundary before external send",
+      "requires_approval": true,
+      "evidence_required": true,
+      "audit_required": true
+    }
+  ],
+  "approval_boundary": "human approval required before external send",
+  "evidence_refs": [
+    "evidence:event:req-router-accepted-001"
+  ],
+  "audit_refs": [
+    "audit:req-router-accepted-001"
+  ],
+  "controls": {
+    "identity": true,
+    "policy": true,
+    "evidence": true,
+    "attestation": true,
+    "revocation": true,
+    "audit": true,
+    "tenant_isolation": true
+  }
+}
