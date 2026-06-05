@@ -13,6 +13,7 @@ from prophet_mesh.intake import validate_intake_file
 from prophet_mesh.lifecycle import LIFECYCLE
 from prophet_mesh.repo_state import validate_repo_state_file
 from prophet_mesh.router import validate_router_interface_file
+from prophet_mesh.model_policy import validate_model_task_policy_file
 
 DESCRIPTION = "Prophet Mesh: the distributed instantiation of the Michael Agent."
 
@@ -75,6 +76,12 @@ def _cmd_validate_router(args: argparse.Namespace) -> int:
     return 0 if result.valid else 1
 
 
+def _cmd_validate_model_policy(args: argparse.Namespace) -> int:
+    result = validate_model_task_policy_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="prophet-mesh", description=DESCRIPTION)
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -123,6 +130,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_router.add_argument("path")
     validate_router.set_defaults(func=_cmd_validate_router)
+
+    validate_model_policy = subcommands.add_parser(
+        "validate-model-policy",
+        help="validate the Prophet Mesh model task/domain policy",
+    )
+    validate_model_policy.add_argument("path")
+    validate_model_policy.set_defaults(func=_cmd_validate_model_policy)
     return parser
 
 
