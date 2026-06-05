@@ -1,0 +1,27 @@
+{
+  "trace_id": "execution-trace-rejected-001",
+  "request_id": "req-router-rejected-001",
+  "conductor_id": "michael-agent",
+  "principal": "principal:socioprophet",
+  "task": "email_reply",
+  "router_decision_ref": "examples/router-decision.rejected.json",
+  "choir_plan_ref": "examples/choir-execution-plan.rejected.json",
+  "conductor_response_ref": "examples/conductor-response.rejected.json",
+  "lifecycle": "Serving",
+  "status": "completed",
+  "evidence_refs": [],
+  "audit_refs": [],
+  "approval_state": {
+    "required": false,
+    "pending": []
+  },
+  "controls": {
+    "identity": true,
+    "policy": false,
+    "evidence": false,
+    "attestation": true,
+    "revocation": false,
+    "audit": false,
+    "tenant_isolation": true
+  }
+}
