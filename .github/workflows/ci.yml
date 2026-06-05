@@ -30,6 +30,8 @@ jobs:
       - run: '! prophet-mesh validate-choir-plan examples/choir-execution-plan.rejected.json'
       - run: prophet-mesh validate-conductor-response examples/conductor-response.accepted.json
       - run: '! prophet-mesh validate-conductor-response examples/conductor-response.rejected.json'
+      - run: prophet-mesh validate-execution-trace examples/execution-trace.accepted.json
+      - run: '! prophet-mesh validate-execution-trace examples/execution-trace.rejected.json'
       - run: prophet-mesh validate-intake examples/customer-intake.accepted.json
       - run: '! prophet-mesh validate-intake examples/customer-intake.rejected.json'
       - run: prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
