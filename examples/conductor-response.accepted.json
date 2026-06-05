@@ -1,0 +1,37 @@
+{
+  "response_id": "conductor-response-accepted-001",
+  "plan_id": "choir-plan-accepted-001",
+  "request_id": "req-router-accepted-001",
+  "conductor_id": "michael-agent",
+  "principal": "principal:socioprophet",
+  "task": "email_reply",
+  "status": "awaiting_approval",
+  "summary": "I drafted a relationship-aware email reply and held the external send behind human approval.",
+  "message": "Draft is ready for review. I used approved relationship context, preserved the approval boundary, and will not send externally until you approve.",
+  "evidence_refs": [
+    "evidence:event:req-router-accepted-001"
+  ],
+  "audit_refs": [
+    "audit:req-router-accepted-001"
+  ],
+  "pending_approvals": [
+    "approve_external_send"
+  ],
+  "next_actions": [
+    "review_draft",
+    "approve_or_request_revision"
+  ],
+  "escalation": {
+    "required": false,
+    "reason": "approval boundary is already explicit"
+  },
+  "controls": {
+    "identity": true,
+    "policy": true,
+    "evidence": true,
+    "attestation": true,
+    "revocation": true,
+    "audit": true,
+    "tenant_isolation": true
+  }
+}
