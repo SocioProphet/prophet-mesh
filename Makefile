@@ -1,4 +1,4 @@
-.PHONY: install test lint describe validate validate-intake validate-choir validate-evaluation
+.PHONY: install test lint describe validate validate-intake validate-choir validate-evaluation validate-repo-state
 
 install:
 	python -m pip install -e '.[dev]'
@@ -16,6 +16,7 @@ validate:
 	prophet-mesh validate-blueprint blueprints/michael-agent.yaml
 	prophet-mesh validate-blueprint blueprints/premium-custom-agent.yaml
 	prophet-mesh validate-choir specs/agent-choir.yaml
+	prophet-mesh validate-repo-state specs/repo-state.yaml
 	prophet-mesh validate-intake examples/customer-intake.accepted.json
 	! prophet-mesh validate-intake examples/customer-intake.rejected.json
 	prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
@@ -31,3 +32,6 @@ validate-choir:
 validate-evaluation:
 	prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
 	! prophet-mesh validate-evaluation examples/evaluation-report.rejected.json
+
+validate-repo-state:
+	prophet-mesh validate-repo-state specs/repo-state.yaml
