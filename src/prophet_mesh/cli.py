@@ -12,6 +12,7 @@ from prophet_mesh.evaluation import validate_evaluation_report_file
 from prophet_mesh.intake import validate_intake_file
 from prophet_mesh.lifecycle import LIFECYCLE
 from prophet_mesh.repo_state import validate_repo_state_file
+from prophet_mesh.router import validate_router_interface_file
 
 DESCRIPTION = "Prophet Mesh: the distributed instantiation of the Michael Agent."
 
@@ -68,6 +69,12 @@ def _cmd_validate_repo_state(args: argparse.Namespace) -> int:
     return 0 if result.valid else 1
 
 
+def _cmd_validate_router(args: argparse.Namespace) -> int:
+    result = validate_router_interface_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="prophet-mesh", description=DESCRIPTION)
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -109,6 +116,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_repo_state.add_argument("path")
     validate_repo_state.set_defaults(func=_cmd_validate_repo_state)
+
+    validate_router = subcommands.add_parser(
+        "validate-router",
+        help="validate the Prophet Mesh model-router interface contract",
+    )
+    validate_router.add_argument("path")
+    validate_router.set_defaults(func=_cmd_validate_router)
     return parser
 
 
