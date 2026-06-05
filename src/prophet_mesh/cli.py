@@ -11,10 +11,11 @@ from prophet_mesh.contracts import AgentBlueprint
 from prophet_mesh.evaluation import validate_evaluation_report_file
 from prophet_mesh.intake import validate_intake_file
 from prophet_mesh.lifecycle import LIFECYCLE
+from prophet_mesh.model_policy import validate_model_task_policy_file
 from prophet_mesh.repo_state import validate_repo_state_file
 from prophet_mesh.router import validate_router_interface_file
 from prophet_mesh.router_decision import validate_router_decision_file
-from prophet_mesh.model_policy import validate_model_task_policy_file
+from prophet_mesh.router_dry_run import dry_run_router_decision_file
 
 DESCRIPTION = "Prophet Mesh: the distributed instantiation of the Michael Agent."
 
@@ -89,6 +90,12 @@ def _cmd_validate_router_decision(args: argparse.Namespace) -> int:
     return 0 if result.valid else 1
 
 
+def _cmd_dry_run_router(args: argparse.Namespace) -> int:
+    result = dry_run_router_decision_file(Path(args.request), Path(args.policy))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.validation.valid else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="prophet-mesh", description=DESCRIPTION)
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -151,6 +158,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_router_decision.add_argument("path")
     validate_router_decision.set_defaults(func=_cmd_validate_router_decision)
+
+    dry_run_router = subcommands.add_parser(
+        "dry-run-router",
+        help="generate and validate a deterministic router decision from a request and policy",
+    )
+    dry_run_router.add_argument("request")
+    dry_run_router.add_argument(
+        "--policy",
+        default="specs/model-task-policy.yaml",
+        help="model task/domain policy path",
+    )
+    dry_run_router.set_defaults(func=_cmd_dry_run_router)
     return parser
 
 
