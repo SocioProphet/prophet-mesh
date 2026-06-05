@@ -19,5 +19,8 @@ jobs:
       - run: python -m pytest
       - run: prophet-mesh validate-blueprint blueprints/michael-agent.yaml
       - run: prophet-mesh validate-blueprint blueprints/premium-custom-agent.yaml
+      - run: prophet-mesh validate-choir specs/agent-choir.yaml
       - run: prophet-mesh validate-intake examples/customer-intake.accepted.json
       - run: '! prophet-mesh validate-intake examples/customer-intake.rejected.json'
+      - run: prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
+      - run: '! prophet-mesh validate-evaluation examples/evaluation-report.rejected.json'
