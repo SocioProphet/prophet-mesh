@@ -1,0 +1,33 @@
+{
+  "plan_id": "choir-plan-rejected-001",
+  "request_id": "req-router-rejected-001",
+  "conductor_id": "michael-agent",
+  "principal": "principal:socioprophet",
+  "task": "email_reply",
+  "domain": "communications",
+  "policy_decision": "allow",
+  "router_decision_ref": "examples/router-decision.rejected.json",
+  "summary": "Send an email directly without approval.",
+  "steps": [
+    {
+      "step_id": "step-001-draft-and-send",
+      "agent": "writing-agent",
+      "action": "draft and send email immediately",
+      "requires_approval": false,
+      "evidence_required": false,
+      "audit_required": false
+    }
+  ],
+  "approval_boundary": "none",
+  "evidence_refs": [],
+  "audit_refs": [],
+  "controls": {
+    "identity": true,
+    "policy": false,
+    "evidence": false,
+    "attestation": true,
+    "revocation": false,
+    "audit": false,
+    "tenant_isolation": true
+  }
+}
