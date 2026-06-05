@@ -1,4 +1,4 @@
-.PHONY: install test lint describe validate validate-intake validate-choir validate-evaluation validate-repo-state validate-router validate-model-policy
+.PHONY: install test lint describe validate validate-intake validate-choir validate-evaluation validate-repo-state validate-router validate-model-policy validate-router-decision dry-run-router
 
 install:
 	python -m pip install -e '.[dev]'
@@ -19,6 +19,9 @@ validate:
 	prophet-mesh validate-repo-state specs/repo-state.yaml
 	prophet-mesh validate-router specs/model-router-interface.yaml
 	prophet-mesh validate-model-policy specs/model-task-policy.yaml
+	prophet-mesh validate-router-decision examples/router-decision.accepted.json
+	! prophet-mesh validate-router-decision examples/router-decision.rejected.json
+	prophet-mesh dry-run-router examples/router-request.email.json
 	prophet-mesh validate-intake examples/customer-intake.accepted.json
 	! prophet-mesh validate-intake examples/customer-intake.rejected.json
 	prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
@@ -43,3 +46,10 @@ validate-router:
 
 validate-model-policy:
 	prophet-mesh validate-model-policy specs/model-task-policy.yaml
+
+validate-router-decision:
+	prophet-mesh validate-router-decision examples/router-decision.accepted.json
+	! prophet-mesh validate-router-decision examples/router-decision.rejected.json
+
+dry-run-router:
+	prophet-mesh dry-run-router examples/router-request.email.json
