@@ -28,6 +28,8 @@ jobs:
       - run: prophet-mesh dry-run-router examples/router-request.email.json
       - run: prophet-mesh validate-choir-plan examples/choir-execution-plan.accepted.json
       - run: '! prophet-mesh validate-choir-plan examples/choir-execution-plan.rejected.json'
+      - run: prophet-mesh validate-conductor-response examples/conductor-response.accepted.json
+      - run: '! prophet-mesh validate-conductor-response examples/conductor-response.rejected.json'
       - run: prophet-mesh validate-intake examples/customer-intake.accepted.json
       - run: '! prophet-mesh validate-intake examples/customer-intake.rejected.json'
       - run: prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
