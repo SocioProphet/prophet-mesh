@@ -1,0 +1,114 @@
+name: prophet-mesh-model-router-interface
+version: 0.1.0
+product: Prophet Mesh
+canonical_repo: SocioProphet/model-router
+primary_consumer: Michael Agent
+purpose: one stable routing interface across the open mesh model family, specialist agents, tools, workflows, and customer-derived conductors
+
+invariants:
+  - single_interface
+  - conductor_mediated
+  - model_family_open
+  - route_decisions_explainable
+  - memory_context_scoped
+  - policy_checked_before_execution
+  - evidence_emitted_for_material_routes
+  - customer_routes_tenant_isolated
+  - fallback_paths_declared
+  - no_direct_tool_bypass
+
+route_inputs:
+  required:
+    - request_id
+    - conductor_id
+    - principal
+    - intent
+    - memory_scope
+    - policy_context
+    - candidate_routes
+  optional:
+    - customer_id
+    - tenant_id
+    - evidence_refs
+    - latency_budget_ms
+    - cost_budget
+    - privacy_requirement
+    - quality_requirement
+    - fallback_preference
+
+route_outputs:
+  required:
+    - request_id
+    - selected_route
+    - route_type
+    - rationale
+    - policy_decision
+    - evidence_event
+    - fallback_route
+    - audit_ref
+  route_types:
+    - local_model
+    - open_model
+    - fine_tuned_model
+    - domain_model
+    - customer_model
+    - specialist_agent
+    - tool
+    - workflow
+  policy_decisions:
+    - allow
+    - deny
+    - requires_approval
+
+route_families:
+  - id: local_models
+    route_type: local_model
+    purpose: private or edge-local models for low-latency and high-privacy execution
+  - id: open_models
+    route_type: open_model
+    purpose: open-weight and community models exposed through governed interfaces
+  - id: fine_tuned_models
+    route_type: fine_tuned_model
+    purpose: task-optimized variants with governance and eval lineage
+  - id: domain_models
+    route_type: domain_model
+    purpose: industry or functional-specialist models
+  - id: customer_models
+    route_type: customer_model
+    purpose: tenant-scoped models and adapters for premium customers
+  - id: specialist_agents
+    route_type: specialist_agent
+    purpose: choir agents delegated by the conductor
+  - id: tools
+    route_type: tool
+    purpose: governed tool invocation with policy, authority, and audit checks
+  - id: workflows
+    route_type: workflow
+    purpose: business or platform workflow execution with approval boundaries
+
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - attestation
+  - revocation
+  - audit
+  - tenant_isolation
+  - fallback
+  - route_explanation
+
+integration_repos:
+  - name: SocioProphet/model-router
+    responsibility: own router API, routing policy, fallback, and route selection semantics
+  - name: SocioProphet/functional-model-surfaces
+    responsibility: define model, adapter, eval, guardrail, tool, agent, and routing surface contracts
+  - name: SocioProphet/agent-registry
+    responsibility: publish conductor and specialist agent manifests for routable agents
+  - name: SocioProphet/agentplane
+    responsibility: execute selected agent routes under runtime policy
+  - name: SocioProphet/memory-mesh
+    responsibility: supply scoped contextual and relational memory to routing decisions
+  - name: SocioProphet/guardrail-fabric
+    responsibility: enforce policy and guardrails before execution
+  - name: SocioProphet/model-governance-ledger
+    responsibility: retain evidence, evaluation, promotion, and rollback records
