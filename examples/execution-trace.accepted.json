@@ -1,0 +1,33 @@
+{
+  "trace_id": "execution-trace-accepted-001",
+  "request_id": "req-router-accepted-001",
+  "conductor_id": "michael-agent",
+  "principal": "principal:socioprophet",
+  "task": "email_reply",
+  "router_decision_ref": "examples/router-decision.accepted.json",
+  "choir_plan_ref": "examples/choir-execution-plan.accepted.json",
+  "conductor_response_ref": "examples/conductor-response.accepted.json",
+  "lifecycle": "Serving",
+  "status": "awaiting_approval",
+  "evidence_refs": [
+    "evidence:event:req-router-accepted-001"
+  ],
+  "audit_refs": [
+    "audit:req-router-accepted-001"
+  ],
+  "approval_state": {
+    "required": true,
+    "pending": [
+      "approve_external_send"
+    ]
+  },
+  "controls": {
+    "identity": true,
+    "policy": true,
+    "evidence": true,
+    "attestation": true,
+    "revocation": true,
+    "audit": true,
+    "tenant_isolation": true
+  }
+}
