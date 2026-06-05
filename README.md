@@ -50,9 +50,9 @@ Core invariants:
 blueprints/               Agent blueprints and premium customization examples
 docs/                     Architecture, product, market, and intake notes
 examples/                 Accepted and rejected intake/evaluation fixtures
-specs/                    Machine-readable contracts, including agent-choir.yaml
+specs/                    Machine-readable contracts, including agent-choir.yaml and repo-state.yaml
 src/prophet_mesh/          Reference Python package and CLI validators
-tests/                    Contract, lifecycle, intake, evaluation, and choir tests
+tests/                    Contract, lifecycle, intake, evaluation, choir, and repo-state tests
 ```
 
 ## Quick start
@@ -68,6 +68,7 @@ prophet-mesh lifecycle
 prophet-mesh validate-blueprint blueprints/michael-agent.yaml
 prophet-mesh validate-blueprint blueprints/premium-custom-agent.yaml
 prophet-mesh validate-choir specs/agent-choir.yaml
+prophet-mesh validate-repo-state specs/repo-state.yaml
 prophet-mesh validate-intake examples/customer-intake.accepted.json
 prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
 ```
@@ -79,10 +80,11 @@ prophet-mesh describe
 prophet-mesh lifecycle
 prophet-mesh validate-blueprint blueprints/michael-agent.yaml
 prophet-mesh validate-choir specs/agent-choir.yaml
+prophet-mesh validate-repo-state specs/repo-state.yaml
 prophet-mesh validate-intake examples/customer-intake.accepted.json
 prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
 ```
 
 ## Status
 
-This repository is the canonical product nucleus for the Prophet Mesh Agent Choir: architecture spec, machine-readable choir contract, Michael and premium blueprints, lifecycle contract, customer intake workflow, evaluation harness, and CI gates. The next layer is runtime integration with model-router, Agentplane, memory-mesh, hellgraph, prophet-platform, agent-registry, agent-inbox, guardrail-fabric, and model-governance-ledger.
+This repository is the canonical product nucleus for the Prophet Mesh Agent Choir: architecture spec, machine-readable choir contract, repo-state architecture map, Michael and premium blueprints, lifecycle contract, customer intake workflow, evaluation harness, and CI gates. The next layer is runtime integration with model-router, Agentplane, memory-mesh, hellgraph, prophet-platform, agent-registry, agent-inbox, guardrail-fabric, and model-governance-ledger.
