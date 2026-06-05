@@ -49,10 +49,10 @@ Core invariants:
 ```text
 blueprints/               Agent blueprints and premium customization examples
 docs/                     Architecture, product, market, and intake notes
-examples/                 Accepted and rejected intake/evaluation fixtures
+examples/                 Accepted and rejected intake/evaluation/router fixtures
 specs/                    Machine-readable contracts, including agent-choir.yaml, repo-state.yaml, model-router-interface.yaml, and model-task-policy.yaml
-src/prophet_mesh/          Reference Python package and CLI validators
-tests/                    Contract, lifecycle, intake, evaluation, choir, repo-state, router, and model-policy tests
+src/prophet_mesh/          Reference Python package, CLI validators, and dry-run router
+tests/                    Contract, lifecycle, intake, evaluation, choir, repo-state, router, model-policy, and router-decision tests
 ```
 
 ## Quick start
@@ -71,6 +71,8 @@ prophet-mesh validate-choir specs/agent-choir.yaml
 prophet-mesh validate-repo-state specs/repo-state.yaml
 prophet-mesh validate-router specs/model-router-interface.yaml
 prophet-mesh validate-model-policy specs/model-task-policy.yaml
+prophet-mesh validate-router-decision examples/router-decision.accepted.json
+prophet-mesh dry-run-router examples/router-request.email.json
 prophet-mesh validate-intake examples/customer-intake.accepted.json
 prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
 ```
@@ -85,10 +87,12 @@ prophet-mesh validate-choir specs/agent-choir.yaml
 prophet-mesh validate-repo-state specs/repo-state.yaml
 prophet-mesh validate-router specs/model-router-interface.yaml
 prophet-mesh validate-model-policy specs/model-task-policy.yaml
+prophet-mesh validate-router-decision examples/router-decision.accepted.json
+prophet-mesh dry-run-router examples/router-request.email.json
 prophet-mesh validate-intake examples/customer-intake.accepted.json
 prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
 ```
 
 ## Status
 
-This repository is the canonical product nucleus for the Prophet Mesh Agent Choir: architecture spec, machine-readable choir contract, repo-state architecture map, model-router interface contract, model task/domain policy, Michael and premium blueprints, lifecycle contract, customer intake workflow, evaluation harness, and CI gates. The next layer is runtime integration with model-router, Agentplane, memory-mesh, hellgraph, prophet-platform, agent-registry, agent-inbox, guardrail-fabric, and model-governance-ledger.
+This repository is the canonical product nucleus for the Prophet Mesh Agent Choir: architecture spec, machine-readable choir contract, repo-state architecture map, model-router interface contract, model task/domain policy, router decision artifacts, deterministic dry-run routing, Michael and premium blueprints, lifecycle contract, customer intake workflow, evaluation harness, and CI gates. The next layer is runtime integration with model-router, Agentplane, memory-mesh, hellgraph, prophet-platform, agent-registry, agent-inbox, guardrail-fabric, and model-governance-ledger.
