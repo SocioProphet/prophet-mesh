@@ -1,0 +1,112 @@
+name: prophet-mesh-repo-state
+version: 0.1.0
+product: Prophet Mesh
+primary_agent: Michael Agent
+primary_repo: SocioProphet/prophet-mesh
+
+invariants:
+  - single_router_interface
+  - michael_first_experience
+  - relationship_memory
+  - repo_native_orchestration
+  - open_model_family
+  - policy_bound_execution
+  - customer_derivation_without_trust_kernel_bypass
+
+trust_kernel:
+  - identity
+  - policy
+  - evidence
+  - attestation
+  - revocation
+  - audit
+
+layers:
+  human_interface:
+    purpose: human and organization-facing relationship surface
+  lifelong_agent:
+    agent: Michael Agent
+    purpose: default conductor and flagship relationship experience
+  model_router:
+    single_interface: true
+    purpose: stable interface over models, tools, workflows, and specialist agents
+  memory:
+    relationship_aware: true
+    purpose: contextual, relational, project, preference, and evidence memory
+  agent_orchestration:
+    purpose: specialist agent coordination, delegation, synthesis, and lifecycle routing
+  open_mesh_model_family:
+    purpose: composable local, open, fine-tuned, domain, and customer models
+  tools_and_environments:
+    purpose: governed access to search, documents, code repos, knowledge bases, workflows, devices, and APIs
+  trust_governance:
+    purpose: identity, policy, evidence, attestation, revocation, and audit controls
+  premium_derived_agents:
+    trust_kernel_inherited: true
+    purpose: customer-named conductors and choirs derived from the Michael trust kernel
+
+repositories:
+  - name: SocioProphet/prophet-mesh
+    layer: lifelong_agent
+    role: canonical product nucleus, Agent Choir spec, validators, intake, evaluation, and commercial contracts
+    status: active
+  - name: SocioProphet/prophet-platform
+    layer: trust_governance
+    role: control plane, policy, evidence, deployment, runtime integration, and platform orchestration
+    status: active
+  - name: SocioProphet/model-router
+    layer: model_router
+    role: single routing interface across model and agent pathways
+    status: active
+  - name: SocioProphet/functional-model-surfaces
+    layer: open_mesh_model_family
+    role: model, adapter, dataset, eval, guardrail, tool, agent, routing, and promotion contracts
+    status: active
+  - name: SocioProphet/agentplane
+    layer: agent_orchestration
+    role: runtime substrate for conductor and specialist agent execution
+    status: active
+  - name: SocioProphet/agent-registry
+    layer: agent_orchestration
+    role: registry for conductors, specialists, capabilities, and agent manifests
+    status: active
+  - name: SocioProphet/agent-inbox
+    layer: agent_orchestration
+    role: message, request, task, and handoff intake plane for agents
+    status: active
+  - name: SocioProphet/memory-mesh
+    layer: memory
+    role: contextual and relational memory substrate
+    status: active
+  - name: SocioProphet/hellgraph
+    layer: memory
+    role: graph-backed identity, relationship, evidence, and state substrate
+    status: active
+  - name: SocioProphet/guardrail-fabric
+    layer: trust_governance
+    role: safety, policy, and enforcement surface for agents and model routes
+    status: active
+  - name: SocioProphet/model-governance-ledger
+    layer: trust_governance
+    role: evidence, evaluation, promotion, rollback, and factsheet ledger
+    status: active
+  - name: SocioProphet/holmes
+    layer: agent_orchestration
+    role: language intelligence lane for writing, synthesis, and specialist reasoning
+    status: active
+  - name: SocioProphet/Noetica
+    layer: agent_orchestration
+    role: reasoning and cognitive specialist lane
+    status: active
+  - name: SocioProphet/sherlock-search
+    layer: tools_and_environments
+    role: search and evidence discovery surface for research agents
+    status: active
+  - name: SocioProphet/prophet-workspace
+    layer: human_interface
+    role: operator workspace and product surface integration lane
+    status: active
+  - name: SocioProphet/prophet-platform-fabric-mlops-ts-suite
+    layer: open_mesh_model_family
+    role: model operations, training, evaluation, and time-series suite lane
+    status: active
