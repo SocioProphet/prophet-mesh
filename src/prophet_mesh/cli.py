@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from prophet_mesh.choir import validate_choir_spec_file
 from prophet_mesh.contracts import AgentBlueprint
 from prophet_mesh.evaluation import validate_evaluation_report_file
 from prophet_mesh.intake import validate_intake_file
@@ -19,7 +20,8 @@ def _cmd_describe(_: argparse.Namespace) -> int:
         "name": "prophet-mesh",
         "definition": DESCRIPTION,
         "flagship_agent": "Michael Agent",
-        "premium_model": "customer-specific agents derived from the Michael trust kernel",
+        "product_shape": "agent choir with Michael as the default conductor",
+        "premium_model": "customer-specific named conductors and choirs derived from the Michael trust kernel",
         "trust_kernel": ["identity", "policy", "evidence", "attestation", "revocation", "audit"],
     }
     print(json.dumps(payload, indent=2))
@@ -53,6 +55,12 @@ def _cmd_validate_evaluation(args: argparse.Namespace) -> int:
     return 0 if result.valid else 1
 
 
+def _cmd_validate_choir(args: argparse.Namespace) -> int:
+    result = validate_choir_spec_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="prophet-mesh", description=DESCRIPTION)
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -80,6 +88,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_evaluation.add_argument("path")
     validate_evaluation.set_defaults(func=_cmd_validate_evaluation)
+
+    validate_choir = subcommands.add_parser(
+        "validate-choir",
+        help="validate the Prophet Mesh Agent Choir spec",
+    )
+    validate_choir.add_argument("path")
+    validate_choir.set_defaults(func=_cmd_validate_choir)
     return parser
 
 
