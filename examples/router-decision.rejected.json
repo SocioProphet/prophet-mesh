@@ -1,0 +1,27 @@
+{
+  "request_id": "req-router-rejected-001",
+  "conductor_id": "michael-agent",
+  "principal": "principal:socioprophet",
+  "task": "email_reply",
+  "domain": "communications",
+  "intent": "send an email without approval",
+  "memory_scope": "relationship_context:unscoped",
+  "selected_family": "hosted_balanced",
+  "selected_route": "anthropic.claude-sonnet-4.6",
+  "route_type": "hosted_frontier",
+  "specialist_agents": ["writing-agent"],
+  "policy_decision": "allow",
+  "rationale": "",
+  "fallback_route": "",
+  "evidence_event": "",
+  "audit_ref": "",
+  "controls": {
+    "identity": true,
+    "policy": false,
+    "evidence": false,
+    "attestation": true,
+    "revocation": false,
+    "audit": false,
+    "tenant_isolation": true
+  }
+}
