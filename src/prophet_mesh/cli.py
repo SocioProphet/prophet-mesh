@@ -11,6 +11,7 @@ from prophet_mesh.choir_plan import validate_choir_plan_file
 from prophet_mesh.conductor_response import validate_conductor_response_file
 from prophet_mesh.contracts import AgentBlueprint
 from prophet_mesh.evaluation import validate_evaluation_report_file
+from prophet_mesh.execution_trace import validate_execution_trace_file
 from prophet_mesh.intake import validate_intake_file
 from prophet_mesh.lifecycle import LIFECYCLE
 from prophet_mesh.model_policy import validate_model_task_policy_file
@@ -76,6 +77,12 @@ def _cmd_validate_choir_plan(args: argparse.Namespace) -> int:
 
 def _cmd_validate_conductor_response(args: argparse.Namespace) -> int:
     result = validate_conductor_response_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
+def _cmd_validate_execution_trace(args: argparse.Namespace) -> int:
+    result = validate_execution_trace_file(Path(args.path))
     print(json.dumps(result.to_dict(), indent=2))
     return 0 if result.valid else 1
 
@@ -158,6 +165,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_conductor_response.add_argument("path")
     validate_conductor_response.set_defaults(func=_cmd_validate_conductor_response)
+
+    validate_execution_trace = subcommands.add_parser(
+        "validate-execution-trace",
+        help="validate a Prophet Mesh end-to-end execution trace",
+    )
+    validate_execution_trace.add_argument("path")
+    validate_execution_trace.set_defaults(func=_cmd_validate_execution_trace)
 
     validate_repo_state = subcommands.add_parser(
         "validate-repo-state",
