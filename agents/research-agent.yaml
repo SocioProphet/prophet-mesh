@@ -1,0 +1,16 @@
+id: research-agent
+kind: specialist
+label: Research Agent
+version: 0.1.0
+status: active
+role: evidence discovery, source normalization, citation preparation, and research synthesis
+capabilities:
+  - evidence_discovery
+  - source_normalization
+  - citation_preparation
+  - research_synthesis
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - audit
