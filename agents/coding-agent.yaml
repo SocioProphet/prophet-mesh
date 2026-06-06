@@ -1,0 +1,17 @@
+id: coding-agent
+kind: specialist
+label: Coding Agent
+version: 0.1.0
+status: active
+role: code generation, patch planning, repository analysis, tests, and review support
+capabilities:
+  - code_generation
+  - code_review
+  - patch_planning
+  - test_generation
+  - repository_analysis
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - audit
