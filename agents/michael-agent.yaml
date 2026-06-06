@@ -1,0 +1,20 @@
+id: michael-agent
+kind: conductor
+label: Michael Agent
+version: 0.1.0
+status: active
+role: default conductor and lifelong relationship interface
+capabilities:
+  - clarify_intent
+  - maintain_relationship_context
+  - route_to_agent_choir
+  - synthesize_results
+  - preserve_approval_boundaries
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - attestation
+  - revocation
+  - audit
+  - tenant_isolation
