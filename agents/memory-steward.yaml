@@ -1,0 +1,16 @@
+id: memory-steward
+kind: specialist
+label: Memory Steward
+version: 0.1.0
+status: active
+role: contextual, relational, preference, and evidence memory management
+capabilities:
+  - memory_scope_resolution
+  - relationship_context
+  - project_context
+  - evidence_context
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - audit
