@@ -1,0 +1,17 @@
+id: analytics-agent
+kind: specialist
+label: Analytics Agent
+version: 0.1.0
+status: active
+role: metrics, traces, evidence quality, task evaluation, and analytical synthesis
+capabilities:
+  - metrics_analysis
+  - trace_analysis
+  - evidence_quality_review
+  - evaluation_reporting
+  - analytical_synthesis
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - audit
