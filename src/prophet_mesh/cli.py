@@ -19,6 +19,7 @@ from prophet_mesh.repo_state import validate_repo_state_file
 from prophet_mesh.router import validate_router_interface_file
 from prophet_mesh.router_decision import validate_router_decision_file
 from prophet_mesh.router_dry_run import dry_run_router_decision_file
+from prophet_mesh.runtime import run_runtime_file
 
 DESCRIPTION = "Prophet Mesh: the distributed instantiation of the Michael Agent."
 
@@ -113,6 +114,12 @@ def _cmd_validate_router_decision(args: argparse.Namespace) -> int:
 
 def _cmd_dry_run_router(args: argparse.Namespace) -> int:
     result = dry_run_router_decision_file(Path(args.request), Path(args.policy))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.validation.valid else 1
+
+
+def _cmd_run_runtime(args: argparse.Namespace) -> int:
+    result = run_runtime_file(Path(args.request), Path(args.policy))
     print(json.dumps(result.to_dict(), indent=2))
     return 0 if result.validation.valid else 1
 
@@ -212,6 +219,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="model task/domain policy path",
     )
     dry_run_router.set_defaults(func=_cmd_dry_run_router)
+
+    run_runtime = subcommands.add_parser(
+        "run-runtime",
+        help="run the deterministic Prophet Mesh request-to-trace runtime loop",
+    )
+    run_runtime.add_argument("request")
+    run_runtime.add_argument(
+        "--policy",
+        default="specs/model-task-policy.yaml",
+        help="model task/domain policy path",
+    )
+    run_runtime.set_defaults(func=_cmd_run_runtime)
     return parser
 
 
