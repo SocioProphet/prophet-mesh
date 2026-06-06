@@ -1,0 +1,19 @@
+id: governance-sentinel
+kind: specialist
+label: Governance Sentinel
+version: 0.1.0
+status: active
+role: policy, approval, evidence, attestation, and audit enforcement
+capabilities:
+  - policy_review
+  - approval_enforcement
+  - evidence_verification
+  - audit_verification
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - attestation
+  - revocation
+  - audit
+  - tenant_isolation
