@@ -1,0 +1,16 @@
+id: writing-agent
+kind: specialist
+label: Writing Agent
+version: 0.1.0
+status: active
+role: drafting, editing, synthesis, and communication artifacts
+capabilities:
+  - email_drafting
+  - document_creation
+  - document_editing
+  - narrative_synthesis
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - audit
