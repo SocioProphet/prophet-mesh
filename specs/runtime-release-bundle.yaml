@@ -1,0 +1,41 @@
+schema_version: 0.1.0
+kind: prophet_mesh_runtime_release_bundle_contract
+release_channels:
+  - private_preview
+allowed_artifact_kinds:
+  - runtime_release_bundle
+required_runtime_sections:
+  - router_decision
+  - choir_plan
+  - conductor_response
+  - execution_trace
+  - validation
+required_trace_fields:
+  - trace_id
+  - request_id
+  - conductor_id
+  - principal
+  - task
+  - memory_scope
+  - lifecycle
+  - status
+  - evidence_refs
+  - audit_refs
+  - approval_state
+  - controls
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - attestation
+  - revocation
+  - audit
+  - tenant_isolation
+private_preview_invariants:
+  - validation_must_be_true
+  - execution_trace_must_include_memory_scope
+  - email_reply_must_remain_awaiting_approval
+  - approval_boundary_must_be_human_controlled
+  - evidence_refs_must_be_present
+  - audit_refs_must_be_present
+  - generated_local_artifacts_must_be_promoted_explicitly
