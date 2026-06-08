@@ -22,6 +22,7 @@ from prophet_mesh.router import validate_router_interface_file
 from prophet_mesh.router_decision import validate_router_decision_file
 from prophet_mesh.router_dry_run import dry_run_router_decision_file
 from prophet_mesh.runtime import run_runtime_file
+from prophet_mesh.runtime_release_bundle import validate_runtime_release_bundle_file
 
 DESCRIPTION = "Prophet Mesh: the distributed instantiation of the Michael Agent."
 
@@ -98,6 +99,12 @@ def _cmd_validate_agent_registry(args: argparse.Namespace) -> int:
 
 def _cmd_validate_memory_scope(args: argparse.Namespace) -> int:
     result = validate_memory_scope_policy_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
+def _cmd_validate_runtime_release_bundle(args: argparse.Namespace) -> int:
+    result = validate_runtime_release_bundle_file(Path(args.path), Path(args.contract))
     print(json.dumps(result.to_dict(), indent=2))
     return 0 if result.valid else 1
 
@@ -196,6 +203,17 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_memory_scope.add_argument("path", nargs="?", default="specs/memory-scope.yaml")
     validate_memory_scope.set_defaults(func=_cmd_validate_memory_scope)
+
+    validate_runtime_release_bundle = subcommands.add_parser(
+        "validate-runtime-release-bundle", help="validate a promoted runtime release bundle"
+    )
+    validate_runtime_release_bundle.add_argument("path")
+    validate_runtime_release_bundle.add_argument(
+        "--contract",
+        default="specs/runtime-release-bundle.yaml",
+        help="runtime release bundle contract path",
+    )
+    validate_runtime_release_bundle.set_defaults(func=_cmd_validate_runtime_release_bundle)
 
     validate_repo_state = subcommands.add_parser("validate-repo-state", help="validate the Prophet Mesh repo-state architecture spec")
     validate_repo_state.add_argument("path")
