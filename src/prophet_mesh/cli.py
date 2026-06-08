@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from prophet_mesh.agent_registry import validate_agent_registry_path
 from prophet_mesh.choir import validate_choir_spec_file
 from prophet_mesh.choir_plan import validate_choir_plan_file
 from prophet_mesh.conductor_response import validate_conductor_response_file
@@ -88,6 +89,12 @@ def _cmd_validate_execution_trace(args: argparse.Namespace) -> int:
     return 0 if result.valid else 1
 
 
+def _cmd_validate_agent_registry(args: argparse.Namespace) -> int:
+    result = validate_agent_registry_path(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
 def _cmd_validate_repo_state(args: argparse.Namespace) -> int:
     result = validate_repo_state_file(Path(args.path))
     print(json.dumps(result.to_dict(), indent=2))
@@ -138,98 +145,66 @@ def build_parser() -> argparse.ArgumentParser:
     validate_blueprint.add_argument("path")
     validate_blueprint.set_defaults(func=_cmd_validate_blueprint)
 
-    validate_intake = subcommands.add_parser(
-        "validate-intake",
-        help="validate a premium customer intake artifact",
-    )
+    validate_intake = subcommands.add_parser("validate-intake", help="validate a premium customer intake artifact")
     validate_intake.add_argument("path")
     validate_intake.set_defaults(func=_cmd_validate_intake)
 
-    validate_evaluation = subcommands.add_parser(
-        "validate-evaluation",
-        help="validate a Prophet Mesh evaluation report",
-    )
+    validate_evaluation = subcommands.add_parser("validate-evaluation", help="validate a Prophet Mesh evaluation report")
     validate_evaluation.add_argument("path")
     validate_evaluation.set_defaults(func=_cmd_validate_evaluation)
 
-    validate_choir = subcommands.add_parser(
-        "validate-choir",
-        help="validate the Prophet Mesh Agent Choir spec",
-    )
+    validate_choir = subcommands.add_parser("validate-choir", help="validate the Prophet Mesh Agent Choir spec")
     validate_choir.add_argument("path")
     validate_choir.set_defaults(func=_cmd_validate_choir)
 
-    validate_choir_plan = subcommands.add_parser(
-        "validate-choir-plan",
-        help="validate a Prophet Mesh choir execution plan",
-    )
+    validate_choir_plan = subcommands.add_parser("validate-choir-plan", help="validate a Prophet Mesh choir execution plan")
     validate_choir_plan.add_argument("path")
     validate_choir_plan.set_defaults(func=_cmd_validate_choir_plan)
 
     validate_conductor_response = subcommands.add_parser(
-        "validate-conductor-response",
-        help="validate a Prophet Mesh conductor response envelope",
+        "validate-conductor-response", help="validate a Prophet Mesh conductor response envelope"
     )
     validate_conductor_response.add_argument("path")
     validate_conductor_response.set_defaults(func=_cmd_validate_conductor_response)
 
     validate_execution_trace = subcommands.add_parser(
-        "validate-execution-trace",
-        help="validate a Prophet Mesh end-to-end execution trace",
+        "validate-execution-trace", help="validate a Prophet Mesh end-to-end execution trace"
     )
     validate_execution_trace.add_argument("path")
     validate_execution_trace.set_defaults(func=_cmd_validate_execution_trace)
 
-    validate_repo_state = subcommands.add_parser(
-        "validate-repo-state",
-        help="validate the Prophet Mesh repo-state architecture spec",
+    validate_agent_registry = subcommands.add_parser(
+        "validate-agent-registry", help="validate registered Prophet Mesh agent manifests"
     )
+    validate_agent_registry.add_argument("path", nargs="?", default="agents")
+    validate_agent_registry.set_defaults(func=_cmd_validate_agent_registry)
+
+    validate_repo_state = subcommands.add_parser("validate-repo-state", help="validate the Prophet Mesh repo-state architecture spec")
     validate_repo_state.add_argument("path")
     validate_repo_state.set_defaults(func=_cmd_validate_repo_state)
 
-    validate_router = subcommands.add_parser(
-        "validate-router",
-        help="validate the Prophet Mesh model-router interface contract",
-    )
+    validate_router = subcommands.add_parser("validate-router", help="validate the Prophet Mesh model-router interface contract")
     validate_router.add_argument("path")
     validate_router.set_defaults(func=_cmd_validate_router)
 
-    validate_model_policy = subcommands.add_parser(
-        "validate-model-policy",
-        help="validate the Prophet Mesh model task/domain policy",
-    )
+    validate_model_policy = subcommands.add_parser("validate-model-policy", help="validate the Prophet Mesh model task/domain policy")
     validate_model_policy.add_argument("path")
     validate_model_policy.set_defaults(func=_cmd_validate_model_policy)
 
-    validate_router_decision = subcommands.add_parser(
-        "validate-router-decision",
-        help="validate a Prophet Mesh router decision artifact",
-    )
+    validate_router_decision = subcommands.add_parser("validate-router-decision", help="validate a Prophet Mesh router decision artifact")
     validate_router_decision.add_argument("path")
     validate_router_decision.set_defaults(func=_cmd_validate_router_decision)
 
     dry_run_router = subcommands.add_parser(
-        "dry-run-router",
-        help="generate and validate a deterministic router decision from a request and policy",
+        "dry-run-router", help="generate and validate a deterministic router decision from a request and policy"
     )
     dry_run_router.add_argument("request")
-    dry_run_router.add_argument(
-        "--policy",
-        default="specs/model-task-policy.yaml",
-        help="model task/domain policy path",
-    )
+    dry_run_router.add_argument("--policy", default="specs/model-task-policy.yaml", help="model task/domain policy path")
     dry_run_router.set_defaults(func=_cmd_dry_run_router)
 
-    run_runtime = subcommands.add_parser(
-        "run-runtime",
-        help="run the deterministic Prophet Mesh request-to-trace runtime loop",
-    )
+    run_runtime = subcommands.add_parser("run-runtime", help="run the deterministic Prophet Mesh request-to-trace runtime loop")
     run_runtime.add_argument("request")
-    run_runtime.add_argument(
-        "--policy",
-        default="specs/model-task-policy.yaml",
-        help="model task/domain policy path",
-    )
+    run_runtime.add_argument("--policy", default="specs/model-task-policy.yaml", help="model task/domain policy path")
     run_runtime.set_defaults(func=_cmd_run_runtime)
     return parser
 
