@@ -17,6 +17,7 @@ jobs:
       - run: python -m pip install -e '.[dev]'
       - run: python -m ruff check src tests
       - run: python -m pytest
+      - run: prophet-mesh validate-agent-registry agents
       - run: prophet-mesh validate-blueprint blueprints/michael-agent.yaml
       - run: prophet-mesh validate-blueprint blueprints/premium-custom-agent.yaml
       - run: prophet-mesh validate-choir specs/agent-choir.yaml
@@ -26,6 +27,8 @@ jobs:
       - run: prophet-mesh validate-router-decision examples/router-decision.accepted.json
       - run: '! prophet-mesh validate-router-decision examples/router-decision.rejected.json'
       - run: prophet-mesh dry-run-router examples/router-request.email.json
+      - run: prophet-mesh run-runtime examples/router-request.email.json --output artifacts/runtime/router-request.email.runtime.json
+      - run: python -m json.tool artifacts/runtime/router-request.email.runtime.json >/dev/null
       - run: prophet-mesh validate-choir-plan examples/choir-execution-plan.accepted.json
       - run: '! prophet-mesh validate-choir-plan examples/choir-execution-plan.rejected.json'
       - run: prophet-mesh validate-conductor-response examples/conductor-response.accepted.json
