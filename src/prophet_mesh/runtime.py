@@ -14,6 +14,7 @@ from prophet_mesh.agent_registry import AgentRegistry, load_agent_registry, vali
 from prophet_mesh.choir_plan import validate_choir_plan
 from prophet_mesh.conductor_response import validate_conductor_response
 from prophet_mesh.execution_trace import validate_execution_trace
+from prophet_mesh.memory_scope import validate_request_memory_scope
 from prophet_mesh.model_policy import load_model_task_policy
 from prophet_mesh.router_dry_run import dry_run_router_decision, load_router_request
 
@@ -134,6 +135,7 @@ def _trace_from_chain(
         "conductor_id": str(decision["conductor_id"]),
         "principal": str(decision["principal"]),
         "task": str(decision["task"]),
+        "memory_scope": str(decision.get("memory_scope", "")),
         "router_decision_ref": f"router-decision:{request_id}",
         "choir_plan_ref": str(plan["plan_id"]),
         "conductor_response_ref": str(response["response_id"]),
@@ -180,6 +182,10 @@ def run_runtime(
     trace = _trace_from_chain(decision, plan, response)
 
     errors: list[str] = []
+    memory_validation = validate_request_memory_scope(request)
+    if not memory_validation.valid:
+        errors.extend(f"memory_scope: {error}" for error in memory_validation.errors)
+
     registry_validation = validate_agent_registry()
     if not registry_validation.valid:
         errors.extend(f"agent_registry: {error}" for error in registry_validation.errors)
