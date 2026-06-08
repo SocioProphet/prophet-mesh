@@ -1,0 +1,76 @@
+schema_version: 0.1.0
+kind: prophet_mesh_memory_scope_policy
+required_default_scope: relationship_context:approved
+forbidden_scopes:
+  - unscoped
+  - all
+  - unrestricted
+  - raw_memory
+  - private_unapproved
+allowed_scopes:
+  - scope: relationship_context:approved
+    class: relationship_context
+    approval_state: approved
+    allowed_tasks:
+      - chat
+      - email_reply
+      - text_message_reply
+      - office_document_creation
+      - office_document_editing
+    required_controls:
+      - identity
+      - policy
+      - evidence
+      - audit
+      - revocation
+  - scope: project_context:approved
+    class: project_context
+    approval_state: approved
+    allowed_tasks:
+      - research
+      - coding
+      - code_review
+      - operations_plan
+      - analytics
+    required_controls:
+      - identity
+      - policy
+      - evidence
+      - audit
+  - scope: evidence_context:approved
+    class: evidence_context
+    approval_state: approved
+    allowed_tasks:
+      - research
+      - legal_compliance_draft
+      - scientific_reasoning
+      - analytics
+    required_controls:
+      - identity
+      - policy
+      - evidence
+      - audit
+      - attestation
+  - scope: customer_context:approved
+    class: customer_context
+    approval_state: approved
+    allowed_tasks:
+      - chat
+      - email_reply
+      - text_message_reply
+      - operations_plan
+      - office_document_creation
+      - office_document_editing
+    required_controls:
+      - identity
+      - policy
+      - evidence
+      - audit
+      - tenant_isolation
+      - revocation
+invariants:
+  - memory_scope_must_be_explicit
+  - memory_scope_must_not_be_unscoped
+  - memory_scope_must_be_allowed_for_task
+  - memory_scope_must_preserve_policy_evidence_audit
+  - private_or_unapproved_memory_must_not_be_used
