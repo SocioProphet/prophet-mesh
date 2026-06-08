@@ -11,3 +11,7 @@ build/
 .env.*
 coverage.xml
 htmlcov/
+
+# Generated local runtime evidence bundles.
+# Curated examples belong under examples/ or release bundles, not this scratch path.
+artifacts/runtime/
