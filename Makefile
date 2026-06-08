@@ -1,4 +1,6 @@
-.PHONY: install test lint describe validate validate-agent-registry validate-intake validate-choir validate-choir-plan validate-conductor-response validate-execution-trace validate-evaluation validate-repo-state validate-router validate-model-policy validate-router-decision dry-run-router run-runtime
+.PHONY: install test lint describe validate validate-agent-registry validate-intake validate-choir validate-choir-plan validate-conductor-response validate-execution-trace validate-evaluation validate-repo-state validate-router validate-model-policy validate-router-decision validate-runtime-artifact dry-run-router run-runtime
+
+RUNTIME_ARTIFACT ?= artifacts/runtime/router-request.email.runtime.json
 
 install:
 	python -m pip install -e '.[dev]'
@@ -23,7 +25,7 @@ validate:
 	prophet-mesh validate-router-decision examples/router-decision.accepted.json
 	! prophet-mesh validate-router-decision examples/router-decision.rejected.json
 	prophet-mesh dry-run-router examples/router-request.email.json
-	prophet-mesh run-runtime examples/router-request.email.json
+	$(MAKE) validate-runtime-artifact
 	prophet-mesh validate-choir-plan examples/choir-execution-plan.accepted.json
 	! prophet-mesh validate-choir-plan examples/choir-execution-plan.rejected.json
 	prophet-mesh validate-conductor-response examples/conductor-response.accepted.json
@@ -74,8 +76,12 @@ validate-router-decision:
 	prophet-mesh validate-router-decision examples/router-decision.accepted.json
 	! prophet-mesh validate-router-decision examples/router-decision.rejected.json
 
+validate-runtime-artifact:
+	prophet-mesh run-runtime examples/router-request.email.json --output $(RUNTIME_ARTIFACT)
+	python -m json.tool $(RUNTIME_ARTIFACT) >/dev/null
+
 dry-run-router:
 	prophet-mesh dry-run-router examples/router-request.email.json
 
 run-runtime:
-	prophet-mesh run-runtime examples/router-request.email.json
+	prophet-mesh run-runtime examples/router-request.email.json --output $(RUNTIME_ARTIFACT)
