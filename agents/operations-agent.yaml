@@ -1,0 +1,18 @@
+id: operations-agent
+kind: specialist
+label: Operations Agent
+version: 0.1.0
+status: active
+role: operational planning, workflow coordination, runbook support, and approval-aware execution
+capabilities:
+  - operations_planning
+  - workflow_coordination
+  - runbook_support
+  - approval_tracking
+  - status_reporting
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - audit
+  - revocation
