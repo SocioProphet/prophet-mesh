@@ -1,0 +1,133 @@
+{
+  "bundle_id": "runtime-release-bundle:req-router-dry-run-001",
+  "kind": "runtime_release_bundle",
+  "schema_version": "0.1.0",
+  "release_channel": "private_preview",
+  "source_request": "examples/router-request.email.json",
+  "runtime_result": {
+    "router_decision": {
+      "request_id": "req-router-dry-run-001",
+      "conductor_id": "michael-agent",
+      "principal": "principal:socioprophet",
+      "task": "email_reply",
+      "domain": "communications",
+      "intent": "draft a relationship-aware email reply with evidence and approval boundaries",
+      "memory_scope": "relationship_context:approved",
+      "selected_family": "hosted_balanced",
+      "selected_route": "anthropic.claude-sonnet-4.6",
+      "route_type": "hosted_frontier",
+      "specialist_agents": ["writing-agent", "governance-sentinel"],
+      "policy_decision": "requires_approval",
+      "rationale": "Task 'email_reply' routes through family 'hosted_balanced' under conductor policy.",
+      "fallback_route": "openai.gpt-5.4-mini",
+      "evidence_event": "evidence:event:req-router-dry-run-001",
+      "audit_ref": "audit:req-router-dry-run-001",
+      "controls": {
+        "identity": true,
+        "policy": true,
+        "evidence": true,
+        "attestation": true,
+        "revocation": true,
+        "audit": true,
+        "tenant_isolation": true
+      }
+    },
+    "choir_plan": {
+      "plan_id": "choir-plan:req-router-dry-run-001",
+      "request_id": "req-router-dry-run-001",
+      "conductor_id": "michael-agent",
+      "principal": "principal:socioprophet",
+      "task": "email_reply",
+      "domain": "communications",
+      "policy_decision": "requires_approval",
+      "router_decision_ref": "router-decision:req-router-dry-run-001",
+      "summary": "Execute email_reply through the selected Agent Choir route.",
+      "steps": [
+        {
+          "step_id": "step-001-writing-agent",
+          "agent": "writing-agent",
+          "action": "perform email_reply responsibility for writing-agent",
+          "requires_approval": false,
+          "evidence_required": true,
+          "audit_required": true
+        },
+        {
+          "step_id": "step-002-governance-sentinel",
+          "agent": "governance-sentinel",
+          "action": "perform email_reply responsibility for governance-sentinel",
+          "requires_approval": true,
+          "evidence_required": true,
+          "audit_required": true
+        }
+      ],
+      "approval_boundary": "human approval required before external action",
+      "evidence_refs": ["evidence:event:req-router-dry-run-001"],
+      "audit_refs": ["audit:req-router-dry-run-001"],
+      "controls": {
+        "identity": true,
+        "policy": true,
+        "evidence": true,
+        "attestation": true,
+        "revocation": true,
+        "audit": true,
+        "tenant_isolation": true
+      }
+    },
+    "conductor_response": {
+      "response_id": "conductor-response:req-router-dry-run-001",
+      "plan_id": "choir-plan:req-router-dry-run-001",
+      "request_id": "req-router-dry-run-001",
+      "conductor_id": "michael-agent",
+      "principal": "principal:socioprophet",
+      "task": "email_reply",
+      "status": "awaiting_approval",
+      "summary": "Prepared governed response for email_reply.",
+      "message": "I prepared the requested work through the Agent Choir and preserved evidence, audit, and approval boundaries.",
+      "evidence_refs": ["evidence:event:req-router-dry-run-001"],
+      "audit_refs": ["audit:req-router-dry-run-001"],
+      "pending_approvals": ["approve_external_action"],
+      "next_actions": ["review_output", "approve_or_request_revision"],
+      "escalation": {"required": false, "reason": "runtime policy path completed"},
+      "controls": {
+        "identity": true,
+        "policy": true,
+        "evidence": true,
+        "attestation": true,
+        "revocation": true,
+        "audit": true,
+        "tenant_isolation": true
+      }
+    },
+    "execution_trace": {
+      "trace_id": "execution-trace:req-router-dry-run-001",
+      "request_id": "req-router-dry-run-001",
+      "conductor_id": "michael-agent",
+      "principal": "principal:socioprophet",
+      "task": "email_reply",
+      "memory_scope": "relationship_context:approved",
+      "router_decision_ref": "router-decision:req-router-dry-run-001",
+      "choir_plan_ref": "choir-plan:req-router-dry-run-001",
+      "conductor_response_ref": "conductor-response:req-router-dry-run-001",
+      "lifecycle": "Serving",
+      "status": "awaiting_approval",
+      "evidence_refs": ["evidence:event:req-router-dry-run-001"],
+      "audit_refs": ["audit:req-router-dry-run-001"],
+      "approval_state": {"required": true, "pending": ["approve_external_action"]},
+      "controls": {
+        "identity": true,
+        "policy": true,
+        "evidence": true,
+        "attestation": true,
+        "revocation": true,
+        "audit": true,
+        "tenant_isolation": true
+      }
+    },
+    "validation": {"valid": true, "errors": []}
+  },
+  "promotion_notes": [
+    "Promoted from deterministic private-preview runtime smoke.",
+    "No external action was executed.",
+    "Human approval boundary preserved."
+  ]
+}
