@@ -127,7 +127,12 @@ def _cmd_dry_run_router(args: argparse.Namespace) -> int:
 
 def _cmd_run_runtime(args: argparse.Namespace) -> int:
     result = run_runtime_file(Path(args.request), Path(args.policy))
-    print(json.dumps(result.to_dict(), indent=2))
+    payload = result.to_dict()
+    if args.output:
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(payload, indent=2))
     return 0 if result.validation.valid else 1
 
 
@@ -205,6 +210,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_runtime = subcommands.add_parser("run-runtime", help="run the deterministic Prophet Mesh request-to-trace runtime loop")
     run_runtime.add_argument("request")
     run_runtime.add_argument("--policy", default="specs/model-task-policy.yaml", help="model task/domain policy path")
+    run_runtime.add_argument("--output", help="optional path to persist the runtime result JSON")
     run_runtime.set_defaults(func=_cmd_run_runtime)
     return parser
 
