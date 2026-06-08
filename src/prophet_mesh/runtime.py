@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from prophet_mesh.agent_registry import AgentRegistry, load_agent_registry, validate_agent_registry
 from prophet_mesh.choir_plan import validate_choir_plan
 from prophet_mesh.conductor_response import validate_conductor_response
 from prophet_mesh.execution_trace import validate_execution_trace
@@ -145,9 +146,33 @@ def _trace_from_chain(
     }
 
 
-def run_runtime(request: dict[str, Any], policy: dict[str, Any]) -> RuntimeResult:
+def _validate_registered_agents(
+    decision: dict[str, Any], plan: dict[str, Any], registry: AgentRegistry
+) -> list[str]:
+    errors: list[str] = []
+    conductor_id = str(decision.get("conductor_id", ""))
+    try:
+        conductor = registry.require_active(conductor_id)
+        if conductor.kind != "conductor":
+            errors.append(f"conductor {conductor_id!r} must be kind conductor")
+    except (KeyError, ValueError) as exc:
+        errors.append(str(exc))
+
+    selected_agents = [str(step.get("agent", "")) for step in plan.get("steps", []) if isinstance(step, dict)]
+    errors.extend(registry.validate_selected_agents(selected_agents))
+    for agent_id in selected_agents:
+        manifest = registry.get(agent_id)
+        if manifest is not None and manifest.kind != "specialist":
+            errors.append(f"agent {agent_id!r} must be kind specialist")
+    return errors
+
+
+def run_runtime(
+    request: dict[str, Any], policy: dict[str, Any], registry: AgentRegistry | None = None
+) -> RuntimeResult:
     """Generate and validate the first deterministic Prophet Mesh runtime chain."""
 
+    agent_registry = registry or load_agent_registry()
     router_result = dry_run_router_decision(request, policy)
     decision = router_result.decision
     plan = _choir_plan_from_decision(decision)
@@ -155,6 +180,11 @@ def run_runtime(request: dict[str, Any], policy: dict[str, Any]) -> RuntimeResul
     trace = _trace_from_chain(decision, plan, response)
 
     errors: list[str] = []
+    registry_validation = validate_agent_registry()
+    if not registry_validation.valid:
+        errors.extend(f"agent_registry: {error}" for error in registry_validation.errors)
+    errors.extend(f"agent_registry: {error}" for error in _validate_registered_agents(decision, plan, agent_registry))
+
     if not router_result.validation.valid:
         errors.extend(f"router_decision: {error}" for error in router_result.validation.errors)
 
