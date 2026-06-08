@@ -1,0 +1,17 @@
+id: creative-agent
+kind: specialist
+label: Creative Agent
+version: 0.1.0
+status: active
+role: image, design, visual, narrative, and creative concept support
+capabilities:
+  - image_prompting
+  - image_generation_planning
+  - design_synthesis
+  - narrative_concepting
+  - creative_iteration
+required_controls:
+  - identity
+  - policy
+  - evidence
+  - audit
