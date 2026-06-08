@@ -1,0 +1,45 @@
+{
+  "bundle_id": "runtime-release-bundle:req-router-dry-run-001",
+  "kind": "runtime_release_bundle",
+  "schema_version": "0.1.0",
+  "release_channel": "private_preview",
+  "source_request": "examples/router-request.email.json",
+  "runtime_result": {
+    "router_decision": {
+      "request_id": "req-router-dry-run-001",
+      "conductor_id": "michael-agent",
+      "principal": "principal:socioprophet",
+      "task": "email_reply",
+      "memory_scope": "unscoped",
+      "controls": {"identity": true, "policy": false, "evidence": false, "audit": false}
+    },
+    "choir_plan": {
+      "approval_boundary": "direct send allowed",
+      "evidence_refs": [],
+      "audit_refs": [],
+      "controls": {"identity": true, "policy": false, "evidence": false, "audit": false}
+    },
+    "conductor_response": {
+      "status": "completed",
+      "evidence_refs": [],
+      "audit_refs": [],
+      "pending_approvals": [],
+      "controls": {"identity": true, "policy": false, "evidence": false, "audit": false}
+    },
+    "execution_trace": {
+      "trace_id": "execution-trace:req-router-dry-run-001",
+      "request_id": "req-router-dry-run-001",
+      "conductor_id": "michael-agent",
+      "principal": "principal:socioprophet",
+      "task": "email_reply",
+      "lifecycle": "Serving",
+      "status": "completed",
+      "evidence_refs": [],
+      "audit_refs": [],
+      "approval_state": {"required": false, "pending": []},
+      "controls": {"identity": true, "policy": false, "evidence": false, "audit": false}
+    },
+    "validation": {"valid": false, "errors": ["synthetic failure"]}
+  },
+  "promotion_notes": []
+}
