@@ -15,6 +15,7 @@ from prophet_mesh.evaluation import validate_evaluation_report_file
 from prophet_mesh.execution_trace import validate_execution_trace_file
 from prophet_mesh.intake import validate_intake_file
 from prophet_mesh.lifecycle import LIFECYCLE
+from prophet_mesh.memory_scope import validate_memory_scope_policy_file
 from prophet_mesh.model_policy import validate_model_task_policy_file
 from prophet_mesh.repo_state import validate_repo_state_file
 from prophet_mesh.router import validate_router_interface_file
@@ -91,6 +92,12 @@ def _cmd_validate_execution_trace(args: argparse.Namespace) -> int:
 
 def _cmd_validate_agent_registry(args: argparse.Namespace) -> int:
     result = validate_agent_registry_path(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
+def _cmd_validate_memory_scope(args: argparse.Namespace) -> int:
+    result = validate_memory_scope_policy_file(Path(args.path))
     print(json.dumps(result.to_dict(), indent=2))
     return 0 if result.valid else 1
 
@@ -183,6 +190,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate_agent_registry.add_argument("path", nargs="?", default="agents")
     validate_agent_registry.set_defaults(func=_cmd_validate_agent_registry)
+
+    validate_memory_scope = subcommands.add_parser(
+        "validate-memory-scope", help="validate the Prophet Mesh memory-scope policy"
+    )
+    validate_memory_scope.add_argument("path", nargs="?", default="specs/memory-scope.yaml")
+    validate_memory_scope.set_defaults(func=_cmd_validate_memory_scope)
 
     validate_repo_state = subcommands.add_parser("validate-repo-state", help="validate the Prophet Mesh repo-state architecture spec")
     validate_repo_state.add_argument("path")
