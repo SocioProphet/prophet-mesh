@@ -18,6 +18,7 @@ jobs:
       - run: python -m ruff check src tests
       - run: python -m pytest
       - run: prophet-mesh validate-agent-registry agents
+      - run: prophet-mesh validate-memory-scope specs/memory-scope.yaml
       - run: prophet-mesh validate-blueprint blueprints/michael-agent.yaml
       - run: prophet-mesh validate-blueprint blueprints/premium-custom-agent.yaml
       - run: prophet-mesh validate-choir specs/agent-choir.yaml
