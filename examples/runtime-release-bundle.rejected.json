@@ -4,6 +4,17 @@
   "schema_version": "0.1.0",
   "release_channel": "private_preview",
   "source_request": "examples/router-request.email.json",
+  "adapter_refs": {
+    "agentplane_adapter": {
+      "repo": "SocioProphet/agentplane",
+      "path": "contracts/prophet-mesh/prophet-mesh-agentplane-adapter.v0.1.json",
+      "contract_version": "v0.1",
+      "merge_commit": "faa767f42028ad0f2475c993700cdbef8490a38e",
+      "content_sha256": "38a3edb62813521a62f257f3f952271255d25dc3a05a14d6b96f04a6ff9b4268",
+      "mode": "live_execution",
+      "required": false
+    }
+  },
   "runtime_result": {
     "router_decision": {
       "request_id": "req-router-dry-run-001",

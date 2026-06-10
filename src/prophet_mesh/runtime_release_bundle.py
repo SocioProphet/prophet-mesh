@@ -132,7 +132,69 @@ def validate_runtime_release_bundle(
     if not isinstance(notes, list) or not notes:
         errors.append("promotion_notes must be a non-empty list")
 
+    errors.extend(_validate_adapter_refs(bundle, release_contract))
+
     return RuntimeReleaseBundleValidationResult(valid=not errors, errors=errors)
+
+
+def _validate_adapter_refs(
+    bundle: dict[str, Any], contract: dict[str, Any]
+) -> list[str]:
+    """Validate adapter_refs carries a correctly shaped agentplane dry-run receipt ref.
+
+    Pin by content hash (content_sha256), not merge commit alone. The content hash
+    is the evidence primitive and makes the reference offline-auditable.
+    """
+    errors: list[str] = []
+    required_adapter_specs = contract.get("required_adapter_refs", {})
+    if not required_adapter_specs:
+        return errors
+
+    adapter_refs = bundle.get("adapter_refs")
+    if not isinstance(adapter_refs, dict):
+        for name in required_adapter_specs:
+            errors.append(f"adapter_refs.{name} is required but adapter_refs is absent")
+        return errors
+
+    for name, spec in required_adapter_specs.items():
+        ref = adapter_refs.get(name)
+        if not isinstance(ref, dict):
+            errors.append(f"adapter_refs.{name} is required but missing")
+            continue
+
+        if ref.get("required") is not True:
+            errors.append(f"adapter_refs.{name}.required must be true")
+
+        if ref.get("mode") != spec.get("mode"):
+            errors.append(
+                f"adapter_refs.{name}.mode must be {spec['mode']!r},"
+                f" got {ref.get('mode')!r}"
+            )
+
+        if ref.get("repo") != spec.get("repo"):
+            errors.append(
+                f"adapter_refs.{name}.repo must be {spec['repo']!r},"
+                f" got {ref.get('repo')!r}"
+            )
+
+        if ref.get("path") != spec.get("path"):
+            errors.append(
+                f"adapter_refs.{name}.path must be {spec['path']!r},"
+                f" got {ref.get('path')!r}"
+            )
+
+        sha = ref.get("content_sha256")
+        if not isinstance(sha, str) or not sha:
+            errors.append(f"adapter_refs.{name}.content_sha256 must be a non-empty string")
+        elif len(sha) != 64 or not all(c in "0123456789abcdef" for c in sha):
+            errors.append(
+                f"adapter_refs.{name}.content_sha256 must be a 64-character lowercase hex SHA-256"
+            )
+
+        if not isinstance(ref.get("merge_commit"), str) or not ref.get("merge_commit"):
+            errors.append(f"adapter_refs.{name}.merge_commit must be a non-empty string")
+
+    return errors
 
 
 def validate_runtime_release_bundle_file(
