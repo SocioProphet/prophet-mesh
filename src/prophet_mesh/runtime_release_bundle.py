@@ -132,7 +132,55 @@ def validate_runtime_release_bundle(
     if not isinstance(notes, list) or not notes:
         errors.append("promotion_notes must be a non-empty list")
 
+    errors.extend(_validate_agentplane_adapter_ref(bundle, release_contract))
+
     return RuntimeReleaseBundleValidationResult(valid=not errors, errors=errors)
+
+
+def _validate_agentplane_adapter_ref(
+    bundle: dict[str, Any], contract: dict[str, Any]
+) -> list[str]:
+    """Validate the agentplane_adapter_ref cross-repo traceability link.
+
+    Enforces repo, path, mode, required=true, and a well-formed content_sha256
+    so the reference is offline-auditable without fetching the remote repo.
+    """
+    adapter_contract = contract.get("agentplane_adapter_ref", {})
+    if not adapter_contract.get("required"):
+        return []
+
+    errors: list[str] = []
+    ref = bundle.get("agentplane_adapter_ref")
+    if not isinstance(ref, dict):
+        errors.append("agentplane_adapter_ref is required")
+        return errors
+
+    for field in adapter_contract.get("required_fields", []):
+        if field not in ref:
+            errors.append(f"agentplane_adapter_ref.{field} is required")
+
+    if ref.get("repo") != adapter_contract.get("required_repo"):
+        errors.append(
+            f"agentplane_adapter_ref.repo must be {adapter_contract.get('required_repo')!r}"
+        )
+    if ref.get("path") != adapter_contract.get("required_path"):
+        errors.append(
+            f"agentplane_adapter_ref.path must be {adapter_contract.get('required_path')!r}"
+        )
+    if ref.get("mode") != adapter_contract.get("required_mode"):
+        errors.append(
+            f"agentplane_adapter_ref.mode must be {adapter_contract.get('required_mode')!r}"
+        )
+    if ref.get("required") is not True:
+        errors.append("agentplane_adapter_ref.required must be true")
+
+    sha = ref.get("content_sha256", "")
+    if not isinstance(sha, str) or len(sha) != 64 or not all(c in "0123456789abcdef" for c in sha):
+        errors.append(
+            "agentplane_adapter_ref.content_sha256 must be a 64-character lowercase hex sha256"
+        )
+
+    return errors
 
 
 def validate_runtime_release_bundle_file(
