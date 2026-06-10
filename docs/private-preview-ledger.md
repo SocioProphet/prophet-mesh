@@ -80,7 +80,7 @@ The following claims are explicitly NOT made by this spine:
 | Lane A | prophet-mesh adapter back-ref patch | PR #5 open — pending merge |
 | Lane C | Private-preview runbook | PR open (this PR) — pending merge |
 | Lane D | Cross-repo ledger | This document — pending merge |
-| Lane G | `prophet-mesh-memory-scope.v0.1.json` mirror in `memory-mesh` | Logged, not started |
+| Lane G | `prophet-mesh-memory-scope.v0.1.json` mirror in `memory-mesh` | **Complete** — [memory-mesh PR #38](https://github.com/SocioProphet/memory-mesh/pull/38), `make validate-prophet-mesh-scope-mirror` passes |
 | Lane E | Health-AI demo packaging/storyboard | Logged, not started |
 | Lane F | Live nonprod controller observations | Out of scope — requires explicit approval and access confirmation |
 | agentplane stray fixture | `integrity-evidence-request.valid.json` path revert | Identified, not reverted — owner decision required |
