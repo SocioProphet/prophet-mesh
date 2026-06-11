@@ -21,6 +21,8 @@ The spine exists to demonstrate, verifiably and reproducibly, that the Prophet M
 | `SocioProphet/agent-registry` | Choir authority mirror | `contracts/prophet-mesh/prophet-mesh-choir-registry.v0.1.json` |
 | `SocioProphet/model-router` | Model-family/task-route mirror | `contracts/prophet-mesh/prophet-mesh-model-routing.v0.1.json` |
 | `SocioProphet/agentplane` | Dry-run receipt adapter | `contracts/prophet-mesh/prophet-mesh-agentplane-adapter.v0.1.json` |
+| `SocioProphet/memory-mesh` | Memory-scope policy mirror — independently attests that `execution_trace.memory_scope` is governed, explicit, and non-empty | `contracts/prophet-mesh/prophet-mesh-memory-scope.v0.1.json` |
+| `SocioProphet/prophet-workspace` | Workspace action contracts — defines the action types (`email_reply`, `operations_plan`, mail/calendar/tasks/contacts/notes) that the conductor operates over | `contracts/workspace/` |
 
 Runtime chain (evidence-first, left to right):
 
@@ -28,12 +30,13 @@ Runtime chain (evidence-first, left to right):
 router request
   → router decision
   → choir plan
-  → conductor response
-  → execution trace
+  → conductor response  ← workspace action types (prophet-workspace)
+  → execution trace     ← memory scope governed (memory-mesh mirror)
   → runtime release bundle
       → agent-registry mirror (choir authority)
       → model-router mirror (routing policy)
       → agentplane dry-run receipt projection (adapter back-ref)
+      → memory-mesh scope mirror (memory governance)
 ```
 
 ---
@@ -135,7 +138,16 @@ python3 tools/validate_prophet_mesh_agentplane_adapter.py
 python3 -m pytest -q tools/tests/test_prophet_mesh_agentplane_adapter.py
 make validate-prophet-mesh-agentplane-adapter
 make validate   # full suite
-make test       # 113+ tests (1 known failing: stray fixture edit — see ledger)
+make test       # 114 tests pass (Lane B stray fixture fixed in PR #275)
+```
+
+### memory-mesh (memory-scope policy mirror)
+
+```bash
+cd ~/dev/memory-mesh
+node scripts/validate-prophet-mesh-scope-mirror.mjs
+make validate-prophet-mesh-scope-mirror   # same as above via Makefile
+make validate                              # full suite including scope mirror
 ```
 
 ---
@@ -148,13 +160,14 @@ See [`docs/private-preview-ledger.md`](private-preview-ledger.md) for the full c
 
 ## 7. v0.1 compatibility matrix
 
-All four spine repos are at `v0.1` with no declared compatibility policy. This table defines the breaking-change policy to prevent a silent chain-break on the first version bump.
+All spine repos are at `v0.1` with no declared compatibility policy. This table defines the breaking-change policy to prevent a silent chain-break on the first version bump.
 
 | Contract | Version | Consumed by | Breaking-change policy |
 |---|---|---|---|
 | `prophet-mesh-choir-registry.v0.1.json` | v0.1 | `prophet-mesh` validator | Any change to required fields, agent identifiers, or choir membership requires a version bump to `v0.2` and a coordinated update to `prophet-mesh` validation. |
 | `prophet-mesh-model-routing.v0.1.json` | v0.1 | `prophet-mesh` router | Any change to task-family mapping, route types, or memory-scope allowlist requires a version bump and `prophet-mesh` router re-validation. |
 | `prophet-mesh-agentplane-adapter.v0.1.json` | v0.1 | `prophet-mesh` bundle validator (via `adapter_refs`) | Any change to `mode`, `effect_enabled`, `workspace_write_enabled`, or `executor_required` requires a version bump, new `content_sha256` in the bundle, and re-validation of all downstream bundles. |
+| `prophet-mesh-memory-scope.v0.1.json` | v0.1 | `memory-mesh` validator, `prophet-mesh` ledger | Any change to `scopePolicy.allowedScopePatterns`, `enforcement`, or `effectBoundary` fields requires a version bump and coordinated update to the `prophet-mesh` runtime release bundle spec. |
 | `runtime-release-bundle` contract | v0.1 (`schema_version: 0.1.0`) | CI gate, `make validate` | Any new required field or invariant is a breaking change requiring a `schema_version` bump and migration of all existing accepted fixtures. |
 
 **Cross-ref rule**: if two repos reference the same contract path with divergent `content_sha256` values, that is a path/content conflict and must be flagged explicitly — never silently resolved by preferring one value.
@@ -165,7 +178,7 @@ All four spine repos are at `v0.1` with no declared compatibility policy. This t
 
 **Lane F** (out of scope for this checkpoint): live nonprod controller observations. Requires explicit approval, confirmed access to a nonprod environment, and a dedicated 6–12 turn session. Pointer only — no timeline or commitments.
 
-**Lane G** (logged, not started): `prophet-mesh-memory-scope.v0.1.json` mirror in `memory-mesh`. Registry mirrors choir authority, model-router mirrors routing policy, agentplane projects execution receipts — but memory scope policy is currently self-attested in `prophet-mesh` only. A mirror in `memory-mesh` completes the symmetry and closes the last unmirrored authority claim.
+**Lane G** (complete): `prophet-mesh-memory-scope.v0.1.json` mirror in `memory-mesh` — closes the symmetry gap (registry mirrors choir authority, model-router mirrors routing policy, agentplane projects execution receipts, memory-mesh now mirrors memory-scope policy). Contract and validator are in `memory-mesh` main; CI gate pending [memory-mesh PR #39](https://github.com/SocioProphet/memory-mesh/pull/39).
 
 ---
 

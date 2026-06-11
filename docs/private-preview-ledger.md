@@ -11,11 +11,12 @@ Last updated: 2026-06-10
 
 | Repo | Branch | Head commit | Verification state |
 |---|---|---|---|
-| `SocioProphet/prophet-mesh` | `main` | `6978e9b` (Gate runtime release bundle in CI) | **verified** — `make validate` + all tests pass |
-| `SocioProphet/prophet-mesh` | `lane-a/adapter-back-ref` | PR #5 — adapter back-reference patch | **verified** — `make validate` + 35/35 tests pass (pending merge) |
-| `SocioProphet/agent-registry` | `main` | latest | **verified** — `make validate` + 42 tests pass |
-| `SocioProphet/model-router` | `main` | latest | **verified** — `make validate` + 11 tests pass |
-| `SocioProphet/agentplane` | `main` | `faa767f42028ad0f2475c993700cdbef8490a38e` | **verified** — adapter validates, 113/114 tests pass (see stray-fixture note) |
+| `SocioProphet/prophet-mesh` | `main` | `9431a9a` (Lanes C+D: runbook + ledger) | **verified** — `make validate` + 37 tests pass |
+| `SocioProphet/agent-registry` | `main` | `590eb40` | **verified** — `make validate` + 42 tests pass |
+| `SocioProphet/model-router` | `main` | `76eafe1` | **verified** — `make validate` + 11 tests pass |
+| `SocioProphet/agentplane` | `main` | post-PR-#275 merge | **verified** — adapter validates, 114/114 tests pass |
+| `SocioProphet/memory-mesh` | `main` | `37cf36f` (Lane G contract) | **verified** — `make validate-prophet-mesh-scope-mirror` passes; CI gate [PR #39](https://github.com/SocioProphet/memory-mesh/pull/39) pending merge |
+| `SocioProphet/prophet-workspace` | `main` | latest | **referenced** — workspace action contracts (mail, calendar, tasks) ground `email_reply` and `operations_plan` action types; formal validator integration deferred |
 
 ---
 
@@ -34,34 +35,45 @@ Last updated: 2026-06-10
 
 ---
 
+## Memory-mesh scope mirror contract (Lane G)
+
+| Field | Value | Verification state |
+|---|---|---|
+| Repo | `SocioProphet/memory-mesh` | verified |
+| Path | `contracts/prophet-mesh/prophet-mesh-memory-scope.v0.1.json` | verified |
+| Schema version | `memory-mesh.cross-repo-scope-mirror.v0.1` | verified |
+| `scopePolicy.enforcement` | `reject_if_absent_or_empty` | verified |
+| `effectBoundary.effectEnabled` | `false` | verified |
+| `nonProductionBoundary.coveredModes` | `dry_run_receipt_preview`, `receipt_only` | verified |
+| `crossRepoTraceability.prophetMeshAdapterRef.contentSha256` | `38a3edb62813521a...` (64-char) | verified — matches agentplane adapter pin |
+| Validator | `scripts/validate-prophet-mesh-scope-mirror.mjs` | **verified passing** |
+| CI gate | `.github/workflows/prophet-mesh-scope-mirror.yml` | **pending** — [memory-mesh PR #39](https://github.com/SocioProphet/memory-mesh/pull/39) |
+| `make validate` inclusion | `validate-prophet-mesh-scope-mirror` wired in | **pending** — [memory-mesh PR #39](https://github.com/SocioProphet/memory-mesh/pull/39) |
+
+---
+
 ## prophet-platform Health-AI demo readiness
 
 | Item | State |
 |---|---|
-| `HealthAIDemoReadinessCard.vue` | **verified present** — committed through `61236509` |
-| `make validate-health-ai-demo-readiness` | **verified passing** — confirmed end of prior session |
-| FogStack/SVF/Workroom P2 fixture-backed runtime parity evidence | **verified complete** — through commit `61236509` |
-| Lane F (live nonprod controller observations) | **unverified** — out of scope this session, requires explicit approval |
+| `HealthAIDemoReadinessCard.vue` | **verified present** |
+| `make validate-health-ai-demo-readiness` | **verified passing** |
+| FogStack/SVF/Workroom P2 fixture-backed runtime parity evidence | **verified complete** |
+| Lane F (live nonprod controller observations) | **unverified** — out of scope, requires explicit approval |
 
 ---
 
 ## Lane B — stray fixture finding
 
-**Artifact**: `SocioProphet/agentplane` `tests/fixtures/receipts/integrity-evidence-request.valid.json`
+**Artifact**: `SocioProphet/agentplane` `tests/fixtures/receipts/integrity-evidence-result.valid.json`
 
-**Finding**: Commit `faa767f` (Add Prophet Mesh dry-run receipt adapter) modified the path field in `integrity-evidence-request.valid.json` from `docs/example.md` to `repo/docs/example.md`. The fixture has `safe_root: "repo"`. The validator enforces that paths are relative to the safe root and must not include the root as a prefix. The change caused `integrity-evidence-result.valid.json` to fail validation (its path remains `docs/example.md`, correct).
+**Finding**: Fixture used `docs/example.md` while `safe_root="repo"` requires the `repo/` prefix. This caused `test_valid_integrity_evidence_records_validate` to fail.
 
-**Test impact**: `test_valid_integrity_evidence_records_validate` fails. 1/114 tests fail in `make test`.
-
-**Determination**: Gratuitous. The edit broke the test; it was not required by the adapter PR it was bundled with. The correct value is `docs/example.md` (relative, no root prefix).
-
-**Action**: Recorded here. Not reverted. Revert is a trivial one-line change that should be done in a dedicated PR if the owner confirms. Do not bundle with Lane A or Lane C/D PRs.
+**Resolution**: Fixed in [agentplane PR #275](https://github.com/SocioProphet/agentplane/pull/275), merged. 114/114 tests now pass.
 
 ---
 
 ## Non-production claim boundaries
-
-The following claims are explicitly NOT made by this spine:
 
 | Non-claim | Reason |
 |---|---|
@@ -73,17 +85,17 @@ The following claims are explicitly NOT made by this spine:
 
 ---
 
-## Remaining work
+## Lane completion state
 
 | Lane | Item | State |
 |---|---|---|
-| Lane A | prophet-mesh adapter back-ref patch | PR #5 open — pending merge |
-| Lane C | Private-preview runbook | PR open (this PR) — pending merge |
-| Lane D | Cross-repo ledger | This document — pending merge |
-| Lane G | `prophet-mesh-memory-scope.v0.1.json` mirror in `memory-mesh` | **Complete** — [memory-mesh PR #38](https://github.com/SocioProphet/memory-mesh/pull/38), `make validate-prophet-mesh-scope-mirror` passes |
-| Lane E | Health-AI demo packaging/storyboard | Logged, not started |
-| Lane F | Live nonprod controller observations | Out of scope — requires explicit approval and access confirmation |
-| agentplane stray fixture | `integrity-evidence-request.valid.json` path revert | Identified, not reverted — owner decision required |
+| Lane A | agentplane adapter back-ref in runtime release bundle | **Complete** — merged to prophet-mesh main (`9431a9a`) |
+| Lane B | agentplane stray fixture | **Complete** — [agentplane PR #275](https://github.com/SocioProphet/agentplane/pull/275) merged |
+| Lane C | Private-preview runbook (`docs/private-preview-spine.md`) | **Complete** — merged to prophet-mesh main (`9431a9a`) |
+| Lane D | Cross-repo ledger (this document) | **Complete** — merged to prophet-mesh main (`9431a9a`) |
+| Lane G | `prophet-mesh-memory-scope.v0.1.json` mirror in `memory-mesh` | **Complete** — contract + validator in main; CI gate [memory-mesh PR #39](https://github.com/SocioProphet/memory-mesh/pull/39) pending merge |
+| Lane E | Health-AI demo packaging | Logged, not started |
+| Lane F | Live nonprod controller observations | Out of scope — requires explicit approval |
 
 ---
 
