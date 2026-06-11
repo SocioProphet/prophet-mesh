@@ -52,5 +52,14 @@
     },
     "validation": {"valid": false, "errors": ["synthetic failure"]}
   },
-  "promotion_notes": []
+  "promotion_notes": [],
+  "agentplane_adapter_ref": {
+    "repo": "SocioProphet/agentplane",
+    "path": "contracts/prophet-mesh/prophet-mesh-agentplane-adapter.v0.1.json",
+    "contract_version": "v0.1",
+    "merge_commit": "faa767f42028ad0f2475c993700cdbef8490a38e",
+    "content_sha256": "38a3edb62813521a62f257f3f952271255d25dc3a05a14d6b96f04a6ff9b4268",
+    "mode": "dry_run_receipt_preview",
+    "required": true
+  }
 }
