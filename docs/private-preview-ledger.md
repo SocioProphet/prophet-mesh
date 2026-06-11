@@ -82,6 +82,7 @@ Last updated: 2026-06-10
 | Memory scope access beyond approved scopes | Validator enforces forbidden-scope rejection |
 | External action without human approval | `email_reply` and `operations_plan` locked to `awaiting_approval` |
 | Model availability as authorization | Authorization governed by policy gates independently of model availability |
+| superconscious future runtime actions without approval | `TRUST_SURFACE.yaml` declares `approval_required_for_future_runtime_actions`; spine §4.6 mirrors the invariant |
 
 ---
 
