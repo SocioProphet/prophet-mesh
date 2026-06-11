@@ -85,6 +85,10 @@ Memory access is restricted to explicitly approved scopes: `relationship_context
 
 Model availability (a model being callable) is not treated as authorization to proceed. Authorization is governed by policy gates, approval boundaries, and evidence requirements — independently of model availability.
 
+**4.6 Approval required for any future runtime actions from superconscious**
+
+The `superconscious` component declares `policy.approval: approval_required_for_future_runtime_actions` in its `TRUST_SURFACE.yaml`. This spine inherits that invariant: no runtime action originating from or attributed to `superconscious` may proceed without explicit human approval. This applies regardless of whether the action is well-formed, policy-passing, or model-confirmed. The trust-surface declaration in `SocioProphet/superconscious` is the authoritative source; this clause is a spine-level mirror ensuring the invariant is visible at the governance checkpoint layer.
+
 ---
 
 ## 5. How to run each gate
