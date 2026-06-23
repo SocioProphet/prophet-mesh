@@ -80,6 +80,32 @@ model_families:
       - google.gemini-3.5-flash
     role: office documents, OCR, editing, redlining, extraction, and document transformation
 
+  vision_understanding:
+    preferred:
+      - qwen.qwen3-vl
+      - meta_llama.llama-4-scout
+      - openai.gpt-5.5
+      - google.gemini-3.1-pro
+    role: image/screenshot/document understanding (VLM) — distinct from image generation
+  reranker:
+    preferred:
+      - qwen.qwen3-reranker
+      - baai.bge-reranker-v2
+      - mixedbread.mxbai-rerank
+    role: cross-encoder reranking of retrieved candidates (the second half of RAG / hellgraph grounding)
+  guard:
+    preferred:
+      - meta_llama.llama-guard-4
+      - qwen.qwen3-guard
+      - google.shieldgemma-2
+    role: safety/policy classification, jailbreak + content moderation for the governance-sentinel + trust kernel
+  embeddings:
+    preferred:
+      - qwen.qwen3-embedding
+      - baai.bge-m3
+      - nomic.nomic-embed-text
+    role: dense text/code embeddings for retrieval, memory, and hellgraph indexing
+
 task_routes:
   - task: chat
     domain: relationship
