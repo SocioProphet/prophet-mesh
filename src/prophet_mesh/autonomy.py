@@ -248,6 +248,10 @@ class AutonomyLadder:
     def level(self, rank: int) -> AutonomyLevel:
         return self._by_rank[rank]
 
+    def ordered_levels(self) -> list[AutonomyLevel]:
+        """Levels low-to-high by rank."""
+        return [self._by_rank[rank] for rank in sorted(self._by_rank)]
+
     def role_ceiling(self, role: str) -> int:
         """Highest rank at which ``role`` is declared in the spec (else L0)."""
         ceiling = 0
@@ -326,3 +330,43 @@ def evaluate_autonomy_file(
 ) -> AutonomyDecision:
     ladder = AutonomyLadder.from_file(spec_path)
     return ladder.evaluate(role, requested_level, available_evidence)
+
+
+# --------------------------------------------------------------------------- #
+# Canonical export — the single source of truth for downstream repos
+# --------------------------------------------------------------------------- #
+CANONICAL_LADDER_DEFAULT_OUT = "specs/ai-driven-development.ladder.json"
+
+
+def canonical_ladder(data: dict[str, Any]) -> dict[str, Any]:
+    """Derive the machine-readable ladder that downstream repos consume.
+
+    This is the single source of truth: tritfabric's gate config, the
+    prophet-platform runtime engine, and the Noetica surface all derive from /
+    verify against this export rather than hand-mirroring the YAML.
+    """
+    ladder = AutonomyLadder.from_spec(data)
+    axis = data.get("governed_autonomy_axis", {}) or {}
+    order = axis.get("trust_kernel_gate_order") or list(TRUST_KERNEL_GATE_ORDER)
+    return {
+        "name": data.get("name"),
+        "version": data.get("version"),
+        "source": "SocioProphet/prophet-mesh:specs/ai-driven-development.yaml",
+        "trust_kernel_gate_order": list(order),
+        "levels": [
+            {
+                "level": lvl.level,
+                "rank": lvl.rank,
+                "label": lvl.label,
+                "roles": list(lvl.choir_roles),
+                "gate": lvl.gate,
+                "evidence_required": lvl.evidence_required,
+                "enforced_at": lvl.enforced_at,
+            }
+            for lvl in ladder.ordered_levels()
+        ],
+    }
+
+
+def canonical_ladder_file(spec_path: str | Path) -> dict[str, Any]:
+    return canonical_ladder(load_ai_driven_development(spec_path))

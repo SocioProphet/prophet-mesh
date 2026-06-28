@@ -4,12 +4,16 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import json
+
 from prophet_mesh.autonomy import (
     AutonomyLadder,
+    canonical_ladder_file,
     validate_ai_driven_development_file,
 )
 
 SPEC = Path("specs/ai-driven-development.yaml")
+CANONICAL = Path("specs/ai-driven-development.ladder.json")
 
 
 def test_spec_is_valid() -> None:
@@ -67,6 +71,16 @@ def test_unknown_role_floors_at_l0() -> None:
     decision = ladder.evaluate(role="memory-steward", requested_level="L3")
     assert decision.role_ceiling == "L0"
     assert decision.granted_level == "L0"
+
+
+def test_canonical_export_is_committed_and_current() -> None:
+    # The committed canonical ladder must match what the spec exports, so
+    # downstream repos (tritfabric, prophet-platform, Noetica) never drift from
+    # a stale source. Regenerate with: prophet-mesh export-autonomy-ladder --out
+    assert CANONICAL.exists(), "run: prophet-mesh export-autonomy-ladder --out"
+    on_disk = json.loads(CANONICAL.read_text(encoding="utf-8"))
+    fresh = canonical_ladder_file(SPEC)
+    assert on_disk == fresh, "canonical ladder is stale; regenerate it"
 
 
 def test_l1_admits_with_disclosure_trail() -> None:
