@@ -1,0 +1,184 @@
+name: prophet-mesh-ai-driven-development
+version: 0.1.0
+product: Prophet Mesh
+primary_repo: SocioProphet/prophet-mesh
+primary_conductor: Michael Agent
+purpose: >
+  2026 reframing of the Gartner (2018) "Applying AI to the Development Process"
+  model and the IBM PE Developer Edition layered architecture, expressed as a
+  canonical prophet-stack contract. Gartner split the field into a left
+  "build-AI" ladder and a right "AI-does-the-work" autonomy ladder. In 2026
+  those two ladders merge: the build-AI ladder is the prophet platform stack,
+  the AI-does-the-work ladder is the Agent Choir, and the prophet
+  differentiator is a third axis Gartner never had -- governed autonomy, where
+  every rung of autonomy is admitted only through the trust kernel.
+
+provenance:
+  source_frameworks:
+    - id: gartner-2018-374252
+      title: Applying Artificial Intelligence to the Development Process
+      note: two-ladder taxonomy (build-AI ladder + AI-autonomy ladder), modernized here for 2026
+    - id: ibm-pe-developer-edition
+      title: IBM Parallel Environment Developer Edition (Fig. 1)
+      note: local-workbench-over-remote-runtime layered model, used as the layering template
+
+invariants:
+  - autonomy_is_governed_not_granted
+  - every_autonomy_level_has_an_explicit_gate
+  - no_trust_kernel_bypass
+  - build_ladder_is_the_platform_stack
+  - work_ladder_is_the_agent_choir
+  - verified_compute_is_a_distinct_arm
+  - evidence_required_scales_with_autonomy
+  - demotion_is_always_available
+
+# ---------------------------------------------------------------------------
+# AXIS 1 -- the build-AI ladder (Gartner LEFT column), mapped to prophet layers.
+# 2018 named vendor categories; 2026 these are owned layers of our own stack.
+# ---------------------------------------------------------------------------
+build_ladder:
+  - rung: ai_infrastructure
+    gartner_2018: "AWS Lambda, IBM Cloud Functions, Google Cloud Platform, Microsoft Azure AI"
+    prophet_2026:
+      owner: prophet-platform
+      realized_by:
+        - kubernetes_kustomize_argocd        # infra/
+        - gpu_serving_substrate               # GCP L4 reasoning lane
+        - vector_store_embed_sidecar          # Noetica/embed-sidecar (Rust)
+  - rung: ai_frameworks
+    gartner_2018: "TensorFlow, Torch, Theano, Apache MXNet, Deeplearning4j, scikit-learn"
+    prophet_2026:
+      owner: tritfabric
+      realized_by:
+        - model_serving_ray                   # atlas/serve
+        - peft_distill_merge                  # slate/{peft,distill,merge}
+        - onnx_roundtrip_validation           # promotion-gate substrate
+  - rung: ai_platforms
+    gartner_2018: "Amazon ML, Microsoft Azure ML, Google Cloud ML Engine, IBM Watson"
+    prophet_2026:
+      owner: tritfabric
+      realized_by:
+        - atlas_orchestration_daemon          # cmd/atlasd
+        - drf_fairness_scheduler              # atlas/scheduler
+        - eval_fabric                         # prophet-platform/apps/eval-fabric-api
+  - rung: ai_services
+    gartner_2018: "Vision/Image, Speech/Language, Conversation, Knowledge, Empathy, Custom Models"
+    prophet_2026:
+      owner: noetica
+      realized_by:
+        - governed_chat_surface               # Noetica app/
+        - mcp_servers                         # Noetica/components/mcp
+        - single_model_router_interface       # specs/model-router-interface.yaml
+        - choir_as_a_service                  # specs/agent-choir.yaml
+
+# ---------------------------------------------------------------------------
+# AXIS 2 -- the AI-autonomy ladder (Gartner RIGHT column), reframed as the
+# Agent Choir on an explicit autonomy ladder. The 2018 "virtual roles" became
+# actual choir agents. Each level names the gate that must clear to operate.
+# ---------------------------------------------------------------------------
+autonomy_ladder:
+  - level: L0
+    label: manual
+    gartner_2018: "(human-only baseline)"
+    description: human performs the task; AI not in the loop
+    choir_roles: []
+    gate: none
+    enforced_at: noetica
+    evidence_required: none
+
+  - level: L1
+    label: assisted
+    gartner_2018: "Assisted Development and Testing -- Virtual Intern, Virtual QA Tester"
+    description: AI suggests/drafts inline; human drives and commits every step
+    choir_roles: [coding, writing]
+    gate: surface_disclosure          # operator sees it is AI-assisted; governance trail logged
+    enforced_at: noetica
+    evidence_required: trail_log
+
+  - level: L2
+    label: automated_unit
+    gartner_2018: "Automated Testing and Code Generation -- Virtual Software Engineer"
+    description: AI completes a bounded unit of work (a function, a test, a query) for human review
+    choir_roles: [coding, analytics]
+    gate: tests_or_review             # coding_routes_require_tests_or_review (model-task-policy)
+    enforced_at: prophet-platform     # eval-fabric replay + svf-validate-change
+    evidence_required: test_result_or_review_receipt
+
+  - level: L3
+    label: automated_design
+    gartner_2018: "Automated Architecture and Data Science -- Virtual Architect, Virtual Data Scientist"
+    description: AI produces a multi-step design / analysis artifact (plan, schema, model) under review
+    choir_roles: [planning, research, analytics]
+    gate: evidence_grounded           # research_routes_require_evidence; verified-compute arm where applicable
+    enforced_at: prophet-platform     # trust-chain admission + evidence-receipts
+    evidence_required: evidence_dossier
+
+  - level: L4
+    label: automated_solution
+    gartner_2018: "Automated Business Modeling and Solution Development -- Virtual Business Analyst, Virtual Solution Architect"
+    description: conductor orchestrates the choir end-to-end to deliver a solution; human approves outcomes
+    choir_roles: [conductor, planning, research, coding, writing, analytics, operations]
+    gate: channel_governed            # channel-governed runtime gate + approval envelope
+    enforced_at: prophet-platform     # channel-governance + conductor-response envelope
+    evidence_required: conductor_response_envelope
+
+  - level: L5
+    label: autonomous_governed
+    gartner_2018: "(beyond 2018 frame)"
+    description: standing autonomous operation within a chartered envelope; safe-by-default, dry-run first
+    choir_roles: [conductor, operations, governance-sentinel]
+    gate: chartered_envelope          # explicit charter + revocation + continuous attestation
+    enforced_at: tritfabric           # atlas/policy SHACL fail-closed + autopilot
+    evidence_required: continuous_attestation_with_revocation
+
+# ---------------------------------------------------------------------------
+# AXIS 3 -- the prophet differentiator Gartner did not have. Every rung of the
+# autonomy ladder is admitted only through the trust kernel, in order.
+# ---------------------------------------------------------------------------
+governed_autonomy_axis:
+  trust_kernel_gate_order:
+    - identity
+    - policy
+    - evidence
+    - attestation
+    - revocation
+    - audit
+  principle: >
+    Autonomy is not a capability that is granted once; it is a level that must
+    be re-admitted per task. A choir role may operate at autonomy level N only
+    if the trust-kernel gate for level N clears. Failure is fail-closed and
+    demotes to the highest level whose gate still clears.
+  distinct_arm:
+    name: verified_compute
+    note: >
+      decorrelated from the generative arms; provides the evidence that lets
+      L3+ design/solution work be trusted rather than merely produced. This is
+      the empty industry column the prophet stack occupies.
+
+# ---------------------------------------------------------------------------
+# Where each concern lives, so this contract stays consistent with the stack.
+# ---------------------------------------------------------------------------
+repo_responsibilities:
+  noetica:
+    role: developer-edition workbench (Gartner "AI Services" rung + operator-facing autonomy control)
+    owns: [governed_chat_surface, autonomy_level_display, steering_promote_demote, governance_trail]
+  prophet-mesh:
+    role: programming-models / tools-platform layer -- defines roles, ladder, contracts
+    owns: [this_spec, agent_choir, model_router_interface, model_task_policy]
+  tritfabric:
+    role: runtime + promotion discipline (Gartner "AI Platforms/Frameworks" rungs; IBM POE/SCI/LoadLeveler analog)
+    owns: [atlas_orchestration, drf_scheduler, shacl_onnx_promotion_gates, L5_charter_enforcement]
+  prophet-platform:
+    role: remote-host runtime hub (IBM "Remote Host" analog) -- where levels are enforced and measured
+    owns: [eval_fabric, trust_chain_admission, channel_governance, evidence_receipts, evidence_console]
+
+ibm_pe_layering_analogy:
+  local_desktop_laptop:
+    ibm: "Developer Edition workbench (programming models, debugger, HPC toolkit, tools platform, base platform) over Eclipse"
+    prophet: "Noetica surface + agent-machine sidecar + embed-sidecar over the MCP/governance shell"
+  communication_scheduling_spine:
+    ibm: "POE Runtime, Scalable Communication Infrastructure (SCI), LoadLeveler"
+    prophet: "Atlas daemon (Ray serve = POE), gRPC fabric (= SCI), DRF scheduler (= LoadLeveler)"
+  remote_host_substrate:
+    ibm: "AIX, Linux Power, Linux x86"
+    prophet: "prophet-platform on Kubernetes (Kustomize + ArgoCD), GPU serving lane, eval-fabric data plane"

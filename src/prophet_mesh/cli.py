@@ -7,6 +7,10 @@ import json
 from pathlib import Path
 
 from prophet_mesh.agent_registry import validate_agent_registry_path
+from prophet_mesh.autonomy import (
+    evaluate_autonomy_file,
+    validate_ai_driven_development_file,
+)
 from prophet_mesh.choir import validate_choir_spec_file
 from prophet_mesh.choir_plan import validate_choir_plan_file
 from prophet_mesh.conductor_response import validate_conductor_response_file
@@ -127,6 +131,20 @@ def _cmd_validate_model_policy(args: argparse.Namespace) -> int:
     return 0 if result.valid else 1
 
 
+def _cmd_validate_ai_driven_development(args: argparse.Namespace) -> int:
+    result = validate_ai_driven_development_file(Path(args.path))
+    print(json.dumps(result.to_dict(), indent=2))
+    return 0 if result.valid else 1
+
+
+def _cmd_evaluate_autonomy(args: argparse.Namespace) -> int:
+    evidence = {token for token in (args.evidence or "").split(",") if token.strip()}
+    decision = evaluate_autonomy_file(Path(args.spec), args.role, args.level, evidence)
+    print(json.dumps(decision.to_dict(), indent=2))
+    # Fail-closed: non-zero exit when the requested level could not be granted.
+    return 0 if not decision.demoted else 1
+
+
 def _cmd_validate_router_decision(args: argparse.Namespace) -> int:
     result = validate_router_decision_file(Path(args.path))
     print(json.dumps(result.to_dict(), indent=2))
@@ -226,6 +244,27 @@ def build_parser() -> argparse.ArgumentParser:
     validate_model_policy = subcommands.add_parser("validate-model-policy", help="validate the Prophet Mesh model task/domain policy")
     validate_model_policy.add_argument("path")
     validate_model_policy.set_defaults(func=_cmd_validate_model_policy)
+
+    validate_ai_dev = subcommands.add_parser(
+        "validate-ai-driven-development",
+        help="validate the Prophet Mesh AI-driven-development autonomy spec",
+    )
+    validate_ai_dev.add_argument("path", nargs="?", default="specs/ai-driven-development.yaml")
+    validate_ai_dev.set_defaults(func=_cmd_validate_ai_driven_development)
+
+    evaluate_autonomy = subcommands.add_parser(
+        "evaluate-autonomy",
+        help="evaluate a fail-closed autonomy decision for a choir role at a requested level",
+    )
+    evaluate_autonomy.add_argument("--role", required=True, help="choir role requesting autonomy")
+    evaluate_autonomy.add_argument("--level", required=True, help="requested autonomy level, e.g. L4")
+    evaluate_autonomy.add_argument(
+        "--evidence", default="", help="comma-separated evidence tokens present at decision time"
+    )
+    evaluate_autonomy.add_argument(
+        "--spec", default="specs/ai-driven-development.yaml", help="autonomy spec path"
+    )
+    evaluate_autonomy.set_defaults(func=_cmd_evaluate_autonomy)
 
     validate_router_decision = subcommands.add_parser("validate-router-decision", help="validate a Prophet Mesh router decision artifact")
     validate_router_decision.add_argument("path")
