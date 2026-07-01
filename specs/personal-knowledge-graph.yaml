@@ -51,7 +51,7 @@ edge_types:
   interestedIn:  { to: Interest, class: Assertion }
   skilledIn:     { to: Interest, class: Assertion }
   # activity (workspace-sourced)
-  participatedIn:{ to: Event, class: Assertion }
+  participatedIn: { to: Event, class: Assertion }
   authored:      { to: Document, class: Assertion }
   communicatedWith: { to: Person, carries: [Communication], class: Assertion }
   # identity scaffolding
