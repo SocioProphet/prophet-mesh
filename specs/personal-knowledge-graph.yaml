@@ -3,100 +3,126 @@ version: 0.1.0
 product: Prophet Mesh
 purpose: >-
   The default graph structure for a person — the seed the Memory Steward builds
-  over. Sits on HellGraph (NodeAtom + AssertionClass + required provenance +
-  SHACL shapes), is scoped by memory-scope.yaml, owned by the memory-steward
-  agent, populated by prophet-workspace (contacts/calendar/mail/drive), and is
-  what the mesh grounds retrieval on per-person. NOT a new store — a schema over
-  HellGraph.
+  over. A schema over HellGraph (NodeAtom + AssertionClass + required provenance
+  + SHACL shapes), scoped by memory-scope.yaml, owned by the memory-steward
+  agent, populated by prophet-workspace (contacts / calendar / mail / drive), and
+  the per-person graph the mesh grounds retrieval on. Not a new store — a schema.
 
 invariants:
-  - self_is_the_single_anchor            # exactly one Self node; the whole graph is ego-centric
-  - every_node_and_edge_has_provenance   # HellGraph rule — synthetic provenance if none other
-  - schema_links_are_structural          # type/identity scaffolding = AssertionClass.Structural
-  - world_claims_are_assertions          # facts about the person/world = AssertionClass.Assertion
-  - open_world                           # missing assertion = unknown, not false
-  - external_links_are_reference_only    # PKG reads external KGs; it never writes into them (privacy)
-  - private_by_default                   # default memory-scope = relationship_context:approved
-  - inference_is_labeled                 # P-RET (pointer-bound) vs P-GEN, and I-DED/IND/ABD (see grounding)
+  - self_is_the_single_anchor
+  - every_node_and_edge_has_provenance
+  - schema_links_are_structural
+  - world_claims_are_assertions
+  - open_world
+  - external_links_are_reference_only
+  - private_by_default
+  - inference_is_labeled
 
 # ── Node types (entity classes) — the vocabulary a person is built from ────────
 node_types:
-  Self:          { class: Person, cardinality: exactly_one, role: the graph anchor (the user) }
-  Person:        { class: Person, qualifiers: [relationship], examples: [Mom, Jamie, colleague, "Mom's dentist"] }
-  Place:         { class: Place, examples: [Hometown, residence, workplace-location] }
-  Organization:  { class: Organization, examples: [High school, employer, "dental practice"] }
-  Thing:         { class: Thing, aka: Possession, examples: [Electric guitar, Acoustic guitar, devices] }
-  Interest:      { class: Topic, aka: [Skill, Hobby, Domain], examples: [guitar, music, a profession] }
-  Event:         { class: Event, source: calendar }
-  Document:      { class: CreativeWork, source: [drive, notes] }
-  Communication: { class: Message, source: [mail, chat], note: often modeled as an edge with content }
-  Account:       { class: ExternalIdentity, role: anchor for external-KG links, examples: [social handle, login] }
+  Self:
+    class: Person
+    cardinality: exactly_one
+    role: "the graph anchor (the user)"
+  Person:
+    class: Person
+    qualifiers: [relationship]
+    examples: ["Mom", "Jamie", "colleague", "Mom's dentist"]
+  Place:
+    class: Place
+    examples: ["Hometown", "residence", "workplace location"]
+  Organization:
+    class: Organization
+    examples: ["High school", "employer", "dental practice"]
+  Thing:
+    class: Thing
+    aka: Possession
+    examples: ["Electric guitar", "Acoustic guitar", "devices"]
+  Interest:
+    class: Topic
+    aka: [Skill, Hobby, Domain]
+    examples: ["guitar", "music", "a profession"]
+  Event:
+    class: Event
+    source: [calendar]
+  Document:
+    class: CreativeWork
+    source: [drive, notes]
+  Communication:
+    class: Message
+    source: [mail, chat]
+    note: "often modeled as an edge with content"
+  Account:
+    class: ExternalIdentity
+    role: "anchor for external-KG links"
+    examples: ["social handle", "login"]
 
 # ── Edge types (typed relations) — solid edges inside the PKG ──────────────────
 edge_types:
-  # family / social
-  relatedTo:     { subtypes: [parentOf, childOf, siblingOf, spouseOf], class: Assertion }
-  knows:         { subtypes: [friendOf, colleagueOf, acquaintanceOf], class: Assertion }
-  # place / org
-  homeTown:      { from: Self, to: Place, class: Assertion }
-  residesIn:     { to: Place, class: Assertion }
-  attended:      { to: Organization, class: Assertion }
-  worksAt:       { to: Organization, class: Assertion }
-  memberOf:      { to: Organization, class: Assertion }
-  # provider relations (2nd-degree, e.g. Mom → dentist)
-  providerFor:   { subtypes: [dentistOf, doctorOf, lawyerOf], class: Assertion }
-  # things / interests
-  owns:          { to: Thing, class: Assertion }
-  uses:          { to: Thing, class: Assertion }
-  interestedIn:  { to: Interest, class: Assertion }
-  skilledIn:     { to: Interest, class: Assertion }
-  # activity (workspace-sourced)
-  participatedIn: { to: Event, class: Assertion }
-  authored:      { to: Document, class: Assertion }
+  relatedTo:        { subtypes: [parentOf, childOf, siblingOf, spouseOf], class: Assertion }
+  knows:            { subtypes: [friendOf, colleagueOf, acquaintanceOf], class: Assertion }
+  homeTown:         { from: Self, to: Place, class: Assertion }
+  residesIn:        { to: Place, class: Assertion }
+  attended:         { to: Organization, class: Assertion }
+  worksAt:          { to: Organization, class: Assertion }
+  memberOf:         { to: Organization, class: Assertion }
+  providerFor:      { subtypes: [dentistOf, doctorOf, lawyerOf], class: Assertion }
+  owns:             { to: Thing, class: Assertion }
+  uses:             { to: Thing, class: Assertion }
+  interestedIn:     { to: Interest, class: Assertion }
+  skilledIn:        { to: Interest, class: Assertion }
+  participatedIn:   { to: Event, class: Assertion }
+  authored:         { to: Document, class: Assertion }
   communicatedWith: { to: Person, carries: [Communication], class: Assertion }
-  # identity scaffolding
-  hasAccount:    { from: [Self, Person], to: Account, class: Structural }
+  hasAccount:       { from: [Self, Person], to: Account, class: Structural }
 
 # ── External links (the dashed edges) — the cross-KG grounding contract ────────
 # A PKG node may point at an entity in an external graph. One-way by invariant:
 # the mesh RESOLVES/reads the external entity for grounding; nothing private
 # crosses outward. Every external link is an Assertion with full provenance.
 external_link:
-  edge: sameAs                    # or externalRef
+  edge: sameAs
   class: Assertion
-  direction: reference_only        # privacy: read external, never write
-  required_fields:
-    - target_kg                    # which external graph (see external_kgs)
-    - target_id                    # the external entity id (e.g. Wikidata Q-id)
-    - confidence                   # entity-resolution confidence 0..1
-    - trust_class                  # source trust (mirrors HellGraph source_trust_class)
-    - provenance                   # required
+  direction: reference_only
+  required_fields: [target_kg, target_id, confidence, trust_class, provenance]
 external_kgs:
-  general_purpose:  { role: entity resolution / world facts, examples: [Wikidata, KBpedia/KKO], links_from: [Place, Organization, Interest] }
-  social_network:   { role: people + relationships, links_from: [Person, Account], privacy: high }
-  domain_specific:  { role: domain KGs (music, medical, legal, finance), links_from: [Interest, Thing] }
-  ecommerce_catalog:{ role: products / listings, links_from: [Thing] }
+  general_purpose:
+    role: "entity resolution and world facts"
+    examples: [Wikidata, "KBpedia/KKO"]
+    links_from: [Place, Organization, Interest]
+  social_network:
+    role: "people and relationships"
+    links_from: [Person, Account]
+    privacy: high
+  domain_specific:
+    role: "domain KGs — music, medical, legal, finance"
+    links_from: [Interest, Thing]
+  ecommerce_catalog:
+    role: "products and listings"
+    links_from: [Thing]
 
 # ── Provenance + scope carried by EVERY node and edge ──────────────────────────
 required_on_every_element:
-  provenance:      { source, captured_at, method }          # HellGraph requirement
-  epistemic_mode:  [asserted, imported_rdf, identity]        # HellGraph EpistemicMode
-  assertion_class: [Structural, Assertion, Executable]       # HellGraph AssertionClass
-  provenance_tag:  [P-RET, P-GEN]                            # pointer-bound vs generated (grounding axis)
-  inference_type:  [I-NON, I-DED, I-IND, I-ABD]              # assertive/deductive/inductive/abductive
-  memory_scope:    relationship_context:approved             # default; see memory-scope.yaml
-  confidence:      { type: number, range: [0, 1] }
+  provenance: [source, captured_at, method]
+  epistemic_mode: [asserted, imported_rdf, identity]
+  assertion_class: [Structural, Assertion, Executable]
+  provenance_tag: [P-RET, P-GEN]
+  inference_type: [I-NON, I-DED, I-IND, I-ABD]
+  memory_scope: "relationship_context:approved"
+  confidence: "number in [0,1]"
 
 # ── The SEED — what a brand-new person's graph is, before anything is learned ──
-# A new PKG is the Self node + this schema + the external-KG link-points
-# registered. prophet-workspace ingestion then fills the typed slots:
-#   contacts → Person + knows/relatedTo ;  calendar → Event + participatedIn
-#   mail/chat → communicatedWith (+ Communication) ;  drive/notes → Document + authored
+# Self + this schema + the external-KG link-points. prophet-workspace ingestion
+# then fills the typed slots: contacts → Person + knows/relatedTo; calendar →
+# Event + participatedIn; mail/chat → communicatedWith (+ Communication);
+# drive/notes → Document + authored.
 seed:
   nodes:
-    - { type: Self, id: "self", provenance: { source: onboarding, method: declared } }
+    - type: Self
+      id: self
+      provenance: { source: onboarding, method: declared }
   registered_external_kgs: [general_purpose, social_network, domain_specific, ecommerce_catalog]
-  empty_slots:              # the ontology the steward grows into, no instances yet
+  empty_slots:
     people: []
     places: []
     organizations: []
@@ -109,7 +135,7 @@ seed:
 governance:
   owner_agent: memory-steward
   scope_policy: memory-scope.yaml
-  substrate: hellgraph            # NodeAtom + AssertionClass + SHACL shapes
+  substrate: hellgraph
   grounding: >-
-    This graph is the per-person hellgraph the mesh grounds on. Exam/holdout
+    This graph is the per-person hellgraph the mesh grounds on. Exam / holdout
     content is NEVER ingested (Rule #0 — no contamination via retrieval).
