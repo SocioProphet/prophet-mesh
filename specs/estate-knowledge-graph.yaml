@@ -1,0 +1,67 @@
+name: prophet-mesh-estate-knowledge-graph
+version: 0.1.0
+product: Prophet Mesh
+purpose: >-
+  The estate knowledge graph — the graph the AGENTIC OPERATING SYSTEM is built
+  over. Same HellGraph substrate + Node/Edge primitives + PKG→HellGraph writer +
+  fail-closed merge-gate as the personal graph, but anchored on the Estate (not
+  Self) and scoped to estate/org context. Registers Opportunity, AgentPod,
+  Repository, SharedLibrary, and Cluster nodes with typed edges so the cockpit's
+  estate graph (and its hg: refs) resolve against a real substrate. Not a new
+  store — a schema over HellGraph, a sibling of personal-knowledge-graph.yaml.
+
+invariants:
+  - estate_is_the_single_anchor
+  - every_node_and_edge_has_provenance
+  - schema_links_are_structural
+  - pods_are_executable
+  - open_world
+  - inference_is_labeled
+
+# The graph anchor type (personal graph anchors on Self; the estate on Estate).
+anchor: Estate
+
+# ── Node types (the vocabulary the agentic OS is built from) ───────────────────
+node_types:
+  Estate:
+    class: Organization
+    cardinality: exactly_one
+    role: "the graph anchor (the estate / org root)"
+  Opportunity:
+    class: Objective
+    assertion_class: Assertion
+    role: "an objective the agentic OS pursues"
+    examples: ["Health Services DevSecOps", "ZTA Acceleration"]
+  AgentPod:
+    class: Agent
+    assertion_class: Executable
+    role: "a staffing pod (the choir role, capture-side)"
+    examples: ["Capture Lead", "Technical Solution", "Evidence / QA"]
+  Repository:
+    class: CodeRepository
+    role: "an estate repository a pod anchors to / an objective reuses"
+    examples: ["prophet-platform", "agentplane", "sourceos-spec"]
+  SharedLibrary:
+    class: Library
+    role: "a standardized-once/inherited-everywhere library"
+    examples: ["Canonical operating model", "Quality / release gates"]
+  Cluster:
+    class: Category
+    role: "a portfolio cluster"
+    examples: ["Health", "Cyber", "Infrastructure"]
+
+# ── Edge types (typed relations inside the estate graph) ──────────────────────
+edge_types:
+  pursues:      { from: Estate, to: Opportunity, class: Structural }
+  assignedTo:   { from: AgentPod, to: Opportunity, class: Assertion }
+  reuses:       { from: Opportunity, to: Repository, class: Assertion }
+  anchoredTo:   { from: AgentPod, to: Repository, class: Assertion }
+  inherits:     { from: Opportunity, to: SharedLibrary, class: Assertion }
+  inCluster:    { from: Opportunity, to: Cluster, class: Structural }
+  standardizes: { from: SharedLibrary, to: Repository, class: Assertion }
+
+# External-KG links are not used by the estate graph (kept for validate() parity).
+external_kgs: {}
+
+seed:
+  registered_external_kgs: []
