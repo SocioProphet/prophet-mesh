@@ -57,6 +57,8 @@ model_families:
       - anthropic.claude-opus-4.8
       - deepseek.deepseek-r1
       - qwen.qwen3-235b-a22b
+      - deepseek.deepseek-r1-distill-llama-70b
+      - qwen.qwq-32b
     role: math, proof, planning, complex research, and adversarial reasoning
   image_specialist:
     preferred:
@@ -79,6 +81,33 @@ model_families:
       - mistral.ocr
       - google.gemini-3.5-flash
     role: office documents, OCR, editing, redlining, extraction, and document transformation
+
+  vision_understanding:
+    preferred:
+      - qwen.qwen3-vl
+      - meta_llama.llama-4-scout
+      - qwen.qwen2.5-vl-7b
+      - openai.gpt-5.5
+      - google.gemini-3.1-pro
+    role: image/screenshot/document understanding (VLM) — distinct from image generation
+  reranker:
+    preferred:
+      - qwen.qwen3-reranker
+      - baai.bge-reranker-v2
+      - mixedbread.mxbai-rerank
+    role: cross-encoder reranking of retrieved candidates (the second half of RAG / hellgraph grounding)
+  guard:
+    preferred:
+      - meta_llama.llama-guard-4
+      - qwen.qwen3-guard
+      - google.shieldgemma-2
+    role: safety/policy classification, jailbreak + content moderation for the governance-sentinel + trust kernel
+  embeddings:
+    preferred:
+      - qwen.qwen3-embedding
+      - baai.bge-m3
+      - nomic.nomic-embed-text
+    role: dense text/code embeddings for retrieval, memory, and hellgraph indexing
 
 task_routes:
   - task: chat
