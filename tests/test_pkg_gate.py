@@ -6,7 +6,7 @@ nothing is lost, and the emitted receipt conforms to SyncCycleReceipt v2.
 """
 from __future__ import annotations
 
-from prophet_mesh.pkg import PKG, Node, Edge, Provenance
+from prophet_mesh.pkg import PKG, Node, Provenance
 from prophet_mesh.pkg_ops import EmittingPKG, merge
 from prophet_mesh.pkg_gate import gate, passing, deny_all
 

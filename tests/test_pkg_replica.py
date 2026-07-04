@@ -10,7 +10,7 @@ from prophet_mesh.pkg import PKG, Node, Edge, Provenance
 from prophet_mesh.pkg_replica import (
     Replica, sync, replay_to_hellgraph, persist_canonical, HellGraphSink,
 )
-from prophet_mesh.pkg_gate import passing, deny_all
+from prophet_mesh.pkg_gate import passing
 
 PASS_REF = "urn:srcos:reasoning-receipt:pass-001"
 
@@ -51,8 +51,10 @@ class FakeHellGraphStore:
 def test_two_live_replicas_converge_via_sync():
     a = Replica("device-a", locus="trusted_private")
     b = Replica("device-b", locus="trusted_private")
-    a.add_node(_node("person:ada", "Ada")); a.add_edge(_edge("self", "knows", "person:ada"))
-    b.add_node(_node("person:bob", "Bob")); b.add_edge(_edge("self", "knows", "person:bob"))
+    a.add_node(_node("person:ada", "Ada"))
+    a.add_edge(_edge("self", "knows", "person:ada"))
+    b.add_node(_node("person:bob", "Bob"))
+    b.add_edge(_edge("self", "knows", "person:bob"))
 
     n_ab, n_ba = sync(a, b)
     assert n_ab > 0 and n_ba > 0
@@ -82,7 +84,8 @@ def test_local_edit_after_sync_propagates_back():
 # ── the ingester (gap #4) ────────────────────────────────────────────────────
 def test_replay_persists_to_hellgraph_sink():
     a = Replica("device-a", locus="trusted_private")
-    a.add_node(_node("person:ada", "Ada")); a.add_edge(_edge("self", "knows", "person:ada"))
+    a.add_node(_node("person:ada", "Ada"))
+    a.add_edge(_edge("self", "knows", "person:ada"))
     store = FakeHellGraphStore()
     assert isinstance(store, HellGraphSink)          # structural conformance
     counts = replay_to_hellgraph(a.materialized(), store)
@@ -93,7 +96,8 @@ def test_replay_persists_to_hellgraph_sink():
 
 def test_replay_is_idempotent():
     a = Replica("device-a", locus="trusted_private")
-    a.add_node(_node("person:ada", "Ada")); a.add_edge(_edge("self", "knows", "person:ada"))
+    a.add_node(_node("person:ada", "Ada"))
+    a.add_edge(_edge("self", "knows", "person:ada"))
     store = FakeHellGraphStore()
     replay_to_hellgraph(a.materialized(), store)
     n1, e1 = len(store.nodes), len(store.edges)

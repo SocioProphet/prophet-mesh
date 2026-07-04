@@ -201,7 +201,8 @@ class EmittingPKG:
             self.g.add_node(_node_from(p["node"]))
             self._node_tags.setdefault(p["node"]["id"], set()).add(crdt["tag"])
         elif op == "GraphEdgeAsserted":
-            ed = p["edge"]; key = (ed["src"], ed["rel"], ed["dst"])
+            ed = p["edge"]
+            key = (ed["src"], ed["rel"], ed["dst"])
             self.g.add_edge(_edge_from(ed))
             self._edge_tags.setdefault(key, set()).add(crdt["tag"])
         elif op == "GraphNodeRetracted":
@@ -211,7 +212,8 @@ class EmittingPKG:
                 self.g.nodes.pop(nid, None)
                 self._node_tags.pop(nid, None)
         elif op == "GraphEdgeRetracted":
-            key = tuple(p["edgeKey"]); rem = set(crdt.get("removes", []))
+            key = tuple(p["edgeKey"])
+            rem = set(crdt.get("removes", []))
             self._edge_tags[key] = self._edge_tags.get(key, set()) - rem
             if not self._edge_tags.get(key):
                 self.g.edges = [e for e in self.g.edges if (e.src, e.rel, e.dst) != key]
@@ -246,7 +248,8 @@ def materialize(ops: Iterable[dict], self_id: str = "self") -> PKG:
             node_adds.setdefault(p["node"]["id"], []).append(
                 (crdt["lamport"], env["eventId"], p["node"], crdt["tag"]))
         elif op == "GraphEdgeAsserted":
-            e = p["edge"]; key = (e["src"], e["rel"], e["dst"])
+            e = p["edge"]
+            key = (e["src"], e["rel"], e["dst"])
             edge_adds.setdefault(key, []).append(
                 (crdt["lamport"], env["eventId"], e, crdt["tag"]))
         elif op in ("GraphNodeRetracted", "GraphEdgeRetracted"):
