@@ -1,0 +1,141 @@
+name: prophet-mesh-personal-knowledge-graph
+version: 0.1.0
+product: Prophet Mesh
+purpose: >-
+  The default graph structure for a person — the seed the Memory Steward builds
+  over. A schema over HellGraph (NodeAtom + AssertionClass + required provenance
+  + SHACL shapes), scoped by memory-scope.yaml, owned by the memory-steward
+  agent, populated by prophet-workspace (contacts / calendar / mail / drive), and
+  the per-person graph the mesh grounds retrieval on. Not a new store — a schema.
+
+invariants:
+  - self_is_the_single_anchor
+  - every_node_and_edge_has_provenance
+  - schema_links_are_structural
+  - world_claims_are_assertions
+  - open_world
+  - external_links_are_reference_only
+  - private_by_default
+  - inference_is_labeled
+
+# ── Node types (entity classes) — the vocabulary a person is built from ────────
+node_types:
+  Self:
+    class: Person
+    cardinality: exactly_one
+    role: "the graph anchor (the user)"
+  Person:
+    class: Person
+    qualifiers: [relationship]
+    examples: ["Mom", "Jamie", "colleague", "Mom's dentist"]
+  Place:
+    class: Place
+    examples: ["Hometown", "residence", "workplace location"]
+  Organization:
+    class: Organization
+    examples: ["High school", "employer", "dental practice"]
+  Thing:
+    class: Thing
+    aka: Possession
+    examples: ["Electric guitar", "Acoustic guitar", "devices"]
+  Interest:
+    class: Topic
+    aka: [Skill, Hobby, Domain]
+    examples: ["guitar", "music", "a profession"]
+  Event:
+    class: Event
+    source: [calendar]
+  Document:
+    class: CreativeWork
+    source: [drive, notes]
+  Communication:
+    class: Message
+    source: [mail, chat]
+    note: "often modeled as an edge with content"
+  Account:
+    class: ExternalIdentity
+    role: "anchor for external-KG links"
+    examples: ["social handle", "login"]
+
+# ── Edge types (typed relations) — solid edges inside the PKG ──────────────────
+edge_types:
+  relatedTo:        { subtypes: [parentOf, childOf, siblingOf, spouseOf], class: Assertion }
+  knows:            { subtypes: [friendOf, colleagueOf, acquaintanceOf], class: Assertion }
+  homeTown:         { from: Self, to: Place, class: Assertion }
+  residesIn:        { to: Place, class: Assertion }
+  attended:         { to: Organization, class: Assertion }
+  worksAt:          { to: Organization, class: Assertion }
+  memberOf:         { to: Organization, class: Assertion }
+  providerFor:      { subtypes: [dentistOf, doctorOf, lawyerOf], class: Assertion }
+  owns:             { to: Thing, class: Assertion }
+  uses:             { to: Thing, class: Assertion }
+  interestedIn:     { to: Interest, class: Assertion }
+  skilledIn:        { to: Interest, class: Assertion }
+  participatedIn:   { to: Event, class: Assertion }
+  authored:         { to: Document, class: Assertion }
+  communicatedWith: { to: Person, carries: [Communication], class: Assertion }
+  hasAccount:       { from: [Self, Person], to: Account, class: Structural }
+
+# ── External links (the dashed edges) — the cross-KG grounding contract ────────
+# A PKG node may point at an entity in an external graph. One-way by invariant:
+# the mesh RESOLVES/reads the external entity for grounding; nothing private
+# crosses outward. Every external link is an Assertion with full provenance.
+external_link:
+  edge: sameAs
+  class: Assertion
+  direction: reference_only
+  required_fields: [target_kg, target_id, confidence, trust_class, provenance]
+external_kgs:
+  general_purpose:
+    role: "entity resolution and world facts"
+    examples: [Wikidata, "KBpedia/KKO"]
+    links_from: [Place, Organization, Interest]
+  social_network:
+    role: "people and relationships"
+    links_from: [Person, Account]
+    privacy: high
+  domain_specific:
+    role: "domain KGs — music, medical, legal, finance"
+    links_from: [Interest, Thing]
+  ecommerce_catalog:
+    role: "products and listings"
+    links_from: [Thing]
+
+# ── Provenance + scope carried by EVERY node and edge ──────────────────────────
+required_on_every_element:
+  provenance: [source, captured_at, method]
+  epistemic_mode: [asserted, imported_rdf, identity]
+  assertion_class: [Structural, Assertion, Executable]
+  provenance_tag: [P-RET, P-GEN]
+  inference_type: [I-NON, I-DED, I-IND, I-ABD]
+  memory_scope: "relationship_context:approved"
+  confidence: "number in [0,1]"
+
+# ── The SEED — what a brand-new person's graph is, before anything is learned ──
+# Self + this schema + the external-KG link-points. prophet-workspace ingestion
+# then fills the typed slots: contacts → Person + knows/relatedTo; calendar →
+# Event + participatedIn; mail/chat → communicatedWith (+ Communication);
+# drive/notes → Document + authored.
+seed:
+  nodes:
+    - type: Self
+      id: self
+      provenance: { source: onboarding, method: declared }
+  registered_external_kgs: [general_purpose, social_network, domain_specific, ecommerce_catalog]
+  empty_slots:
+    people: []
+    places: []
+    organizations: []
+    things: []
+    interests: []
+    events: []
+    documents: []
+    accounts: []
+
+governance:
+  owner_agent: memory-steward
+  scope_policy: memory-scope.yaml
+  substrate: hellgraph
+  grounding: >-
+    This graph is the per-person hellgraph the mesh grounds on. Exam / holdout
+    content is NEVER ingested (Rule #0 — no contamination via retrieval).
