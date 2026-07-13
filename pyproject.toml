@@ -15,6 +15,7 @@ dependencies = ["PyYAML>=6.0.2"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
+serve = ["fastapi>=0.115", "uvicorn>=0.30", "httpx>=0.27"]
 
 [project.scripts]
 prophet-mesh = "prophet_mesh.cli:main"
