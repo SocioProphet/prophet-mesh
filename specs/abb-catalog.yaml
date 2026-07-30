@@ -1,0 +1,98 @@
+name: prophet-mesh-abb-catalog
+version: 0.1.0
+product: Prophet Mesh
+primary_conductor: Michael Agent
+
+# ── Purpose ────────────────────────────────────────────────────────────────────
+# Michael Agent's binding to the estate ABB registry. An ABB (ArchitecturalBuildingBlock,
+# per https://schemas.srcos.ai/v2/ArchitecturalBuildingBlock.json) names a FUNCTION —
+# DATABASE, IMPLEMENTATION CONTROLLER, DATA SOLUTION PLATFORM. Implementations declare
+# `implementsAbb` in their MeshActionRegistry participant entry. Michael's `route_by_abb`
+# capability walks that registry, filters on the required ABB, and returns candidates
+# ranked by trust score + counter-test status + access decision.
+#
+# This spec is what Michael reads at runtime. It does NOT redefine the schema — the schema
+# lives in sourceos-spec and is what participants validate against. What lives here is
+# Michael's LOCAL catalog: which ABBs the conductor is currently prepared to route to,
+# with policy gates and evidence requirements per ABB. An ABB present in the estate
+# registry but absent here is a KNOWN slot Michael hasn't yet been permitted to route to
+# (an intentional narrowing, not a bug); an ABB present here but not in the estate registry
+# is a MISCONFIG (Michael would route to nowhere).
+
+# ── Invariants ─────────────────────────────────────────────────────────────────
+# 1. Nothing is authored — this catalog is DERIVED from the estate MeshActionRegistry.
+#    The `derived_from` field records which MAR snapshot was used, so a stale catalog is
+#    detectable by digest mismatch.
+# 2. Every ABB entry carries an evidence_gate — routing without evidence is unlawful
+#    (composes with Michael's evidence_required capabilities).
+# 3. Vendor identity is a property of the IMPLEMENTATION, never of the ABB. An ABB entry
+#    below MUST NOT name a technology. Enforced by the sourceos-spec validator (deny list
+#    catches 'postgres', 'AWS', 'MSTR', 'kubernetes', etc. as role names).
+# 4. A route without at least one implementer in MAR is a KNOWN GAP, not a failure.
+#    Michael reports "no ABB.03 implementations claimed in this estate" as first-class
+#    signal (empties are signal, matching the intent-grid discipline).
+
+invariants:
+  - derived_from_estate_mar
+  - evidence_gate_per_abb
+  - roles_name_functions_not_vendors
+  - empties_are_signal
+
+# ── Bindings ───────────────────────────────────────────────────────────────────
+# Which ABBs Michael currently routes to. Each entry:
+#   abb_id: ABB.NN — must match a schema in sourceos-spec/schemas/ArchitecturalBuildingBlock.json
+#   evidence_gate: which policy gate the route must pass (composes with capability gates)
+#   min_trust_score: 0..1 threshold from a2a-trust; below this, a participant cannot be
+#                    a candidate regardless of `implementsAbb` claim
+#   counter_test_required: if true, a candidate whose counterTestStatus != 'confirmed'
+#                          appears in the shortlist but cannot auto-route (Noetica#570)
+#
+# The initial four ABBs mirror Zurich's E-RDA2 slot set, using the SAME role names
+# (DATABASE, IMPLEMENTATION CONTROLLER, DATA SOLUTION PLATFORM, DATA SOLUTION COMPONENT)
+# because the abstraction is what's borrowed, not the implementation.
+
+bindings:
+  - abb_id: ABB.01
+    role: DATA SOLUTION COMPONENT
+    evidence_gate: reasoning.intent
+    min_trust_score: 0.60
+    counter_test_required: false
+    note: >-
+      Reusable domain modules. Least-restrictive gate — components are composed into
+      solutions, not offered as end-user endpoints directly.
+
+  - abb_id: ABB.02
+    role: IMPLEMENTATION CONTROLLER
+    evidence_gate: action.plan
+    min_trust_score: 0.70
+    counter_test_required: true
+    note: >-
+      Orchestrates other ABBs — governance-critical. Counter-test required because a
+      wrong controller composes wrong solutions.
+
+  - abb_id: ABB.03
+    role: DATABASE
+    evidence_gate: policy.consent
+    min_trust_score: 0.75
+    counter_test_required: true
+    note: >-
+      Durable domain state. Highest gate — data-access privileges resolve here via
+      access-prewalk; a wrong database means wrong records answered as truth.
+
+  - abb_id: ABB.07
+    role: DATA SOLUTION PLATFORM
+    evidence_gate: action.plan
+    min_trust_score: 0.65
+    counter_test_required: false
+    note: >-
+      Delivery substrate (hosting model, deployment shape). Vendor swaps live here —
+      MSFT PAAS, self-hosted, or a sovereign runner all fill this slot.
+
+# ── Freshness ──────────────────────────────────────────────────────────────────
+# Every read stamps a snapshot digest. A catalog that hasn't been re-derived after the
+# estate MAR moved is STALE, not wrong — Michael continues serving with a warning, but
+# the shortlist carries `staleness_seconds` so the caller can decide.
+freshness:
+  max_staleness_seconds: 3600   # one hour; beyond this, Michael refuses new routes
+  derive_from: MeshActionRegistry
+  derive_via: prophet_mesh.abb_catalog.derive

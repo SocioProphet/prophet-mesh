@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "0.1.0",
+  "kind": "SolutionShortlist",
+  "intent": {
+    "primary": "cross-selling scoring",
+    "secondary": ["retail segment", "demographic fragmentation"],
+    "tertiary": ["claims data", "billing data"]
+  },
+  "abbRequirement": "ABB.03",
+  "shortlist": [
+    {
+      "participantRef": "SocioProphet/Noetica",
+      "score": 0.87,
+      "matchReason": [
+        "intent:cross-selling matched participant catalog action retrieve/evaluate",
+        "ABB.03 claim verified against protocol.reads and requiredCapabilities",
+        "verb-ontology overlap: 8/12 KKO verbs common with intent set"
+      ],
+      "counterTestStatus": "confirmed",
+      "counterTestRef": "urn:srcos:dispatch:noetica:ctest:2026-07-30:0001",
+      "accessDecision": {
+        "grade": "granted",
+        "trustScore": 0.82
+      }
+    },
+    {
+      "participantRef": "SourceOS-Linux/agent-machine",
+      "score": 0.71,
+      "matchReason": [
+        "intent:cross-selling matched participant catalog verb evaluate",
+        "ABB.03 claim verified against protocol.reads"
+      ],
+      "counterTestStatus": "available",
+      "accessDecision": {
+        "grade": "requires-consent",
+        "trustScore": 0.71,
+        "remediation": {
+          "url": "https://consent.socioprophet.io/request?scope=billing&user=mdheller&purpose=cross-selling-model&exp=2026-08-06T00:00:00Z&sig=ed25519:MEUCIQD-example",
+          "expectedReturn": "ArtifactConsentRecord",
+          "expiresAt": "2026-08-06T00:00:00Z"
+        }
+      }
+    }
+  ],
+  "autoRouteVerdict": {
+    "decision": "auto-route",
+    "reason": "top candidate score 0.87 exceeds runner-up 0.71 by 0.16 (>threshold 0.15), counterTestStatus=confirmed, access=granted",
+    "chosenIndex": 0
+  },
+  "derivedAt": "2026-07-30T07:12:33Z",
+  "derivedFrom": {
+    "marDigest": "sha256:c8ecfc18c2d8046690c6a7f7a1b3d4c5e6f7089a1b2c3d4e5f60718293a4b5c6",
+    "abbCatalogDigest": "sha256:a5adb2bb0dd9c698f99bad79a656f8e3d971d28eac7bda6543462a5d1e4fad22"
+  }
+}
