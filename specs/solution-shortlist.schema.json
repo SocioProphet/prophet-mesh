@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prophet-mesh.socioprophet.io/schemas/solution-shortlist.schema.json",
+  "title": "SolutionShortlist",
+  "description": "Michael Agent's response envelope when routing an intent to solutions. Instead of silently auto-selecting the top-1 (the shape Zurich's Damian falls back to), Michael returns a ranked SHORTLIST with every candidate's matchReason, counterTestStatus, and accessDecision. Auto-route only fires when the top-2 score gap exceeds threshold AND top counterTestStatus == 'confirmed' AND top accessDecision == 'granted'; otherwise the user picks. Empties are signal: `shortlist: []` with an emptyReason is a valid response, not a bug.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "shortlist", "derivedAt", "derivedFrom"],
+  "properties": {
+    "schemaVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "kind": { "const": "SolutionShortlist" },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary"],
+      "description": "The intent set this shortlist was derived from. Michael's extract_multi_intent can produce primary + secondary + tertiary; each contributes to matchReason on each candidate.",
+      "properties": {
+        "primary": { "type": "string", "minLength": 1 },
+        "secondary": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "tertiary": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "abbRequirement": {
+      "type": "string",
+      "pattern": "^ABB\\.[0-9]{2}$",
+      "description": "The ABB slot the shortlist is filling. Absent for intent-only routing that doesn't resolve to an ABB (some conversational replies stay in Michael and never route)."
+    },
+    "shortlist": {
+      "type": "array",
+      "minItems": 0,
+      "description": "Candidates ranked descending by score. minItems is 0 — an empty shortlist with `emptyReason` is a first-class output (no participant claimed this ABB, or every candidate failed access/counter-test).",
+      "items": { "$ref": "#/$defs/candidate" }
+    },
+    "emptyReason": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Required when shortlist is empty. A specific reason ('no participant in MAR claims ABB.03', 'all 4 candidates deny access for this user'), not a generic one. Present iff shortlist is empty."
+    },
+    "autoRouteVerdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "reason"],
+      "description": "Whether Michael would auto-route (bypassing user pick) on this shortlist. Auto-route is only offered when the top-2 gap exceeds threshold, counter-test is confirmed, and access is granted; otherwise the user must pick.",
+      "properties": {
+        "decision": { "enum": ["auto-route", "user-pick", "abstain"] },
+        "reason": { "type": "string", "minLength": 10 },
+        "chosenIndex": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "derivedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "derivedFrom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["marDigest", "abbCatalogDigest"],
+      "description": "Provenance. If either digest changes after this response, the shortlist is stale and any re-derivation may differ.",
+      "properties": {
+        "marDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "abbCatalogDigest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    }
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["participantRef", "score", "matchReason", "counterTestStatus", "accessDecision"],
+      "properties": {
+        "participantRef": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+$",
+          "description": "GitHub-style owner/repo — matches MeshActionRegistry.participants[*].repo. This is the LINK back to the registry entry, not a copy of its manifest (which would drift)."
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Composite rank in [0,1]. Cue-coverage (from intent extraction) x trust_score (from a2a-trust) x freshness. A candidate below abb-catalog min_trust_score is filtered out BEFORE ranking, so appearing here means the trust floor passed."
+        },
+        "matchReason": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "WHY this candidate matched. e.g. 'intent:cross-selling cue matched participant catalog verb', 'ABB.03 claim verified against protocol.reads'. A candidate with a reason nobody can read is a candidate nobody should route to; minItems: 1 stops empty-reason candidates from appearing."
+        },
+        "counterTestStatus": {
+          "enum": ["confirmed", "available", "unavailable"],
+          "description": "Per Noetica#570's counter-test gate. `confirmed` = counter-test ran and did not refute. `available` = counter-test exists but has not been run. `unavailable` = no counter-test defined. Auto-route requires `confirmed`; the other states appear in the shortlist but Michael declines to auto-select them."
+        },
+        "counterTestRef": {
+          "type": "string",
+          "format": "uri-reference",
+          "description": "Present when status is `confirmed` — the receipt of the counter-test that ran."
+        },
+        "accessDecision": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["grade"],
+          "properties": {
+            "grade": { "enum": ["granted", "requires-consent", "denied"] },
+            "trustScore": { "type": "number", "minimum": 0, "maximum": 1 },
+            "consentReceiptRef": { "type": "string", "format": "uri-reference" },
+            "remediation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["url", "expectedReturn"],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Signed prefilled consent-request URL. The signature binds it to user + purpose + expiry, so an intercepted URL cannot be replayed for a different scope."
+                },
+                "expectedReturn": {
+                  "const": "ArtifactConsentRecord",
+                  "description": "On approval the caller receives an ArtifactConsentRecord that chains into the dispatch-ledger — closing the loop rather than trusting the URL was followed."
+                },
+                "expiresAt": { "type": "string", "format": "date-time" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

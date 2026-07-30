@@ -35,6 +35,50 @@ capabilities:
     description: Generate executable plans constrained by policy, motive, and attestation.
     evidence_required: true
     policy_gate: action.plan
+  # ── capability-integration extensions ──────────────────────────────────────────
+  # Fills the gap the E-RDA2 pattern names but doesn't ground: a conductor that (a) extracts
+  # multiple concurrent intents from one utterance, (b) walks the estate catalogue for
+  # candidate solutions rather than silently auto-routing, (c) resolves ABB slots without
+  # hard-coding vendor identity, and (d) treats access as a signed receipt rather than a
+  # boolean permission checked in-line. Every one is derived, receipt-bound, and replayable —
+  # nothing is asserted. Composes with the existing evidence/causal/counterexample capabilities
+  # above via truth-product (see sourceos-spec LawfulDispatchReceipt).
+  - name: extract_multi_intent
+    description: >-
+      Extract primary + secondary + tertiary intents from one utterance as a ranked set,
+      not a single top-1. Backed by Noetica intent-router.classifyIntents; each returned
+      IntentPlan carries its cue-coverage score, and Michael dispatches the set through the
+      intent-grid rather than choosing before evidence.
+    evidence_required: true
+    policy_gate: reasoning.intent
+  - name: route_by_abb
+    description: >-
+      Route a required capability to an implementation via the ArchitecturalBuildingBlock
+      registry (sourceos-spec/schemas/ArchitecturalBuildingBlock.json). The routing walks
+      MeshActionRegistry.participants[*].implementsAbb — vendor identity is a property of
+      the implementation, never of the route. Swapping a vendor is a one-manifest edit;
+      Michael never learns "we use Postgres" as a load-bearing invariant.
+    evidence_required: true
+    policy_gate: action.plan
+  - name: shortlist_solutions
+    description: >-
+      Given a resolved intent + ABB requirement, return a ranked SolutionShortlist rather
+      than auto-selecting. Each entry carries matchReason (which cues matched, which ABB
+      protocol filled), counterTestStatus (confirmed | available | unavailable, per the
+      counter-test gate from Noetica#570), and accessDecision (granted | requires-consent |
+      denied). Auto-route is only permitted when the top-2 score gap exceeds threshold AND
+      counterTestStatus == confirmed; otherwise the user picks.
+    evidence_required: true
+    policy_gate: action.plan
+  - name: graded_consent_receipt
+    description: >-
+      Resolve access as a graded, receipt-bound decision — never a boolean permission the
+      caller checked in-line. Consumes prophet-platform libs/python/access-prewalk. On
+      requires-consent, emits a signed prefilled request URL whose acceptance produces an
+      ArtifactConsentRecord that chains into the dispatch-ledger. A grant is a receipt
+      the caller can present, not a permission it looked up.
+    evidence_required: true
+    policy_gate: policy.consent
 premium_customization:
   customer_surface: fixed
   allowed: false
