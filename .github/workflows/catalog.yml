@@ -1,0 +1,26 @@
+# Data-catalog contribution stub (asset-catalog program).
+#
+# On every merge to main, prophet-mesh refreshes its OWN contribution shard in
+# SocioProphet/prophet-core-catalog — Lord Michael's "each repo updates its
+# contribution on merge to main" directive. This is the first real end-to-end
+# consumer of the reusable workflow in git-ops-standards.
+#
+# INERT until the org/repo secret CATALOG_CONTRIB_TOKEN is set to a minted GitHub
+# App / org installation token (contents+pull_requests write on
+# prophet-core-catalog). The reusable workflow detects the empty token and
+# no-ops, so this is safe to merge ahead of the secret.
+
+name: catalog-contribute
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  contribute:
+    uses: SocioProphet/git-ops-standards/.github/workflows/catalog-contribute.yml@e5ba73de9e4f92c54dddd320e5f9438c7421094e # git-ops-standards main
+    secrets:
+      catalog_token: ${{ secrets.CATALOG_CONTRIB_TOKEN }}
