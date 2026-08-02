@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import json
 import yaml
 
 DEFAULT_CONTRACT_PATH = Path("specs/runtime-release-bundle.yaml")
@@ -25,7 +25,7 @@ def load_runtime_release_contract(path: str | Path = DEFAULT_CONTRACT_PATH) -> d
     with Path(path).open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle) or {}
     if not isinstance(data, dict):
-        raise ValueError("runtime release bundle contract must be a YAML object")
+        raise TypeError("runtime release bundle contract must be a YAML object")
     return data
 
 
@@ -33,7 +33,7 @@ def load_runtime_release_bundle(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = json.load(handle)
     if not isinstance(data, dict):
-        raise ValueError("runtime release bundle must be a JSON object")
+        raise TypeError("runtime release bundle must be a JSON object")
     return data
 
 

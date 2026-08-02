@@ -73,7 +73,7 @@ def load_repo_state(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle) or {}
     if not isinstance(data, dict):
-        raise ValueError("repo-state artifact must be a YAML object")
+        raise TypeError("repo-state artifact must be a YAML object")
     return data
 
 

@@ -49,7 +49,7 @@ def load_conductor_response(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = json.load(handle)
     if not isinstance(data, dict):
-        raise ValueError("conductor response must be a JSON object")
+        raise TypeError("conductor response must be a JSON object")
     return data
 
 
@@ -98,9 +98,13 @@ def validate_conductor_response(data: dict[str, Any]) -> ConductorResponseValida
         if controls[control] is not True:
             errors.append(f"controls.{control} must be true")
 
-    if data.get("task") == "email_reply" and data.get("status") in {"approved", "completed", "sent"}:
-        if not pending and not data.get("audit_refs"):
-            errors.append("email_reply completion requires approval and audit trace")
+    if (
+        data.get("task") == "email_reply"
+        and data.get("status") in {"approved", "completed", "sent"}
+        and not pending
+        and not data.get("audit_refs")
+    ):
+        errors.append("email_reply completion requires approval and audit trace")
 
     if data.get("task") == "email_reply" and data.get("status") == "sent":
         errors.append("status sent is not allowed; use awaiting_approval, approved, completed, refused, or escalated")

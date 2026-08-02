@@ -47,7 +47,7 @@ def load_evaluation_report(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = json.load(handle)
     if not isinstance(data, dict):
-        raise ValueError("evaluation report must be a JSON object")
+        raise TypeError("evaluation report must be a JSON object")
     return data
 
 

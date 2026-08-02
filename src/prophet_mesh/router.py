@@ -116,7 +116,7 @@ def load_router_interface(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle) or {}
     if not isinstance(data, dict):
-        raise ValueError("model-router interface must be a YAML object")
+        raise TypeError("model-router interface must be a YAML object")
     return data
 
 

@@ -77,7 +77,7 @@ def load_model_task_policy(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle) or {}
     if not isinstance(data, dict):
-        raise ValueError("model task policy must be a YAML object")
+        raise TypeError("model task policy must be a YAML object")
     return data
 
 

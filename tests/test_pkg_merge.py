@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import random
 
-from prophet_mesh.pkg import PKG, Node, Edge, Provenance
+from prophet_mesh.pkg import PKG, Edge, Node, Provenance
 from prophet_mesh.pkg_ops import EmittingPKG, materialize, merge
 
 

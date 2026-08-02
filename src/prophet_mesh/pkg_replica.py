@@ -20,12 +20,13 @@ pkg_hellgraph (to_hellgraph). Nothing below is modified.
 """
 from __future__ import annotations
 
-from typing import Iterable, Protocol, runtime_checkable
+from collections.abc import Iterable
+from typing import Protocol, runtime_checkable
 
-from .pkg import PKG, Node, Edge
-from .pkg_ops import EmittingPKG, EdgeKey, materialize
-from .pkg_gate import gate, GateResult, Resolver, deny_all
+from .pkg import PKG, Edge, Node
+from .pkg_gate import GateResult, Resolver, deny_all, gate
 from .pkg_hellgraph import to_hellgraph
+from .pkg_ops import EdgeKey, EmittingPKG, materialize
 
 
 class Replica:

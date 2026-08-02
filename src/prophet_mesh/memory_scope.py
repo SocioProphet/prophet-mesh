@@ -27,7 +27,7 @@ def load_memory_scope_policy(path: str | Path = "specs/memory-scope.yaml") -> di
     with Path(path).open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle) or {}
     if not isinstance(data, dict):
-        raise ValueError("memory scope policy must be a YAML object")
+        raise TypeError("memory scope policy must be a YAML object")
     return data
 
 

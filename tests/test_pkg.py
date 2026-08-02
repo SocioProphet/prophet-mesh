@@ -65,6 +65,7 @@ def test_external_link_is_reference_only_and_kg_checked():
 
 def test_validator_catches_missing_provenance_and_bad_vocab():
     from dataclasses import replace
+
     from prophet_mesh.pkg import Provenance
     g = seed_graph()
     # break provenance on a node

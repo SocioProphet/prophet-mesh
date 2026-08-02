@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Iterable
+from datetime import UTC, datetime
 
 LIFECYCLE: tuple[str, ...] = (
     "Draft",
@@ -42,7 +42,7 @@ class EvidenceEvent:
     from_state: str
     to_state: str
     attestation: str
-    occurred_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    occurred_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     def proof_tuple(self) -> tuple[str, str, str, str, str, str]:
         return (

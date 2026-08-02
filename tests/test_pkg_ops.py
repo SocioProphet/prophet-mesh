@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import re
 
-from prophet_mesh.pkg import PKG, Node, Edge, Provenance
-from prophet_mesh.pkg_ops import EmittingPKG, fold, verify_chain, LOCI, SPEC_VERSION
+from prophet_mesh.pkg import PKG, Edge, Node, Provenance
+from prophet_mesh.pkg_ops import LOCI, SPEC_VERSION, EmittingPKG, fold, verify_chain
 
 _EVENT_ID = re.compile(r"^urn:srcos:event:")
 _REQUIRED = {"eventId", "eventType", "specVersion", "occurredAt", "actor", "objectId", "payload"}

@@ -7,8 +7,8 @@ nothing is lost, and the emitted receipt conforms to SyncCycleReceipt v2.
 from __future__ import annotations
 
 from prophet_mesh.pkg import PKG, Node, Provenance
+from prophet_mesh.pkg_gate import deny_all, gate, passing
 from prophet_mesh.pkg_ops import EmittingPKG, merge
-from prophet_mesh.pkg_gate import gate, passing, deny_all
 
 PASS_REF = "urn:srcos:reasoning-receipt:pass-001"
 
@@ -66,7 +66,7 @@ def test_attested_gated_op_is_admitted():
 # ── security property ─────────────────────────────────────────────────────────
 def test_untrusted_retract_cannot_delete_canonical_data():
     t = _trusted()                                   # self + Ada (trusted_private)
-    ada_add = [e for e in t.log.ops if e["payload"].get("node", {}).get("id") == "person:ada"][0]
+    ada_add = next(e for e in t.log.ops if e["payload"].get("node", {}).get("id") == "person:ada")
 
     attacker = EmittingPKG(PKG(self_id="self"), replica_id="cloud-evil", locus="burst_cloud")
     attacker.apply_remote(ada_add)                   # observes Ada's tag
