@@ -89,6 +89,33 @@ prophet-mesh validate-intake examples/customer-intake.accepted.json
 prophet-mesh validate-evaluation examples/evaluation-report.accepted.json
 ```
 
+## Local lint gate (pre-commit)
+
+CI runs `python -m ruff check src tests` on every push and pull request, but
+CI only tells you *after* the code has already left your machine. This repo
+also ships a `.pre-commit-config.yaml` that runs the same `ruff check` (plus
+a few basic hygiene checks) locally, before a commit is created, so lint
+errors are caught immediately instead of accumulating on `main` until CI
+happens to be noticed.
+
+The config file by itself enforces nothing — it has to be installed once per
+clone:
+
+```bash
+python -m pip install pre-commit
+pre-commit install
+```
+
+After that, `git commit` runs the hooks automatically. To check the whole
+tree by hand (e.g. after adding the hook, or before a big push):
+
+```bash
+pre-commit run --all-files
+```
+
+If you skip `pre-commit install`, this file is "declared but unenforced" —
+identical to having no gate at all — so please run it once after cloning.
+
 ## CLI
 
 ```bash
