@@ -1,0 +1,25 @@
+# Local pre-commit gate. Mirrors the lint step CI already enforces
+# (`.github/workflows/ci.yml` runs `python -m ruff check src tests`) so that
+# lint errors are caught before a commit ever leaves this machine, instead of
+# only after a push when CI runs. See PR #18 (52 ruff errors sat red on main
+# for 3 days) for why this exists.
+#
+# A config file alone does nothing until it is installed — see the
+# "Local lint gate" section in README.md.
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1
+    hooks:
+      - id: ruff-check
+        name: ruff check (src, tests)
+        files: ^(src|tests)/
