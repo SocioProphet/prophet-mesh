@@ -6,11 +6,15 @@ gated-canonical graph reaches the store.
 """
 from __future__ import annotations
 
-from prophet_mesh.pkg import PKG, Node, Edge, Provenance
-from prophet_mesh.pkg_replica import (
-    Replica, sync, replay_to_hellgraph, persist_canonical, HellGraphSink,
-)
+from prophet_mesh.pkg import PKG, Edge, Node, Provenance
 from prophet_mesh.pkg_gate import passing
+from prophet_mesh.pkg_replica import (
+    HellGraphSink,
+    Replica,
+    persist_canonical,
+    replay_to_hellgraph,
+    sync,
+)
 
 PASS_REF = "urn:srcos:reasoning-receipt:pass-001"
 
@@ -120,7 +124,7 @@ def test_only_gated_canonical_graph_reaches_the_store():
     assert {"claim:cpi", "claim:gdp"} <= conv_ids
 
     store = FakeHellGraphStore()
-    res, counts = persist_canonical(a, store, resolve=passing(PASS_REF))
+    res, _counts = persist_canonical(a, store, resolve=passing(PASS_REF))
 
     persisted = set(store.nodes)
     assert "person:ada" in persisted                 # trusted → persisted

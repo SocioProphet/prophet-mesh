@@ -16,7 +16,6 @@ import pytest
 
 from prophet_mesh.solution_shortlist import (
     AUTO_ROUTE_GAP_THRESHOLD,
-    ValidationResult,
     validate,
 )
 

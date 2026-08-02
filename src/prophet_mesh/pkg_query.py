@@ -8,9 +8,9 @@ touching HellGraph directly. Views carry provenance + confidence for provenance-
 from __future__ import annotations
 
 from collections import deque
-from typing import Any, Optional
+from typing import Any
 
-from .pkg import PKG, Node, Edge
+from .pkg import PKG, Edge, Node
 
 
 def node_view(n: Node) -> dict[str, Any]:
@@ -37,7 +37,7 @@ def edge_view(e: Edge) -> dict[str, Any]:
     }
 
 
-def resolve(g: PKG, node_id: str) -> Optional[Node]:
+def resolve(g: PKG, node_id: str) -> Node | None:
     """Resolve an identity to its node, or None if absent."""
     return g.nodes.get(node_id)
 

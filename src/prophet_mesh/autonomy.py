@@ -77,7 +77,7 @@ def load_ai_driven_development(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle) or {}
     if not isinstance(data, dict):
-        raise ValueError("ai-driven-development spec must be a YAML object")
+        raise TypeError("ai-driven-development spec must be a YAML object")
     return data
 
 
@@ -218,7 +218,7 @@ class AutonomyLadder:
             raise ValueError("autonomy ladder must define L0 (manual baseline)")
 
     @classmethod
-    def from_spec(cls, data: dict[str, Any]) -> "AutonomyLadder":
+    def from_spec(cls, data: dict[str, Any]) -> AutonomyLadder:
         levels: list[AutonomyLevel] = []
         for entry in data.get("autonomy_ladder", []):
             if not isinstance(entry, dict):
@@ -242,7 +242,7 @@ class AutonomyLadder:
         return cls(levels)
 
     @classmethod
-    def from_file(cls, path: str | Path) -> "AutonomyLadder":
+    def from_file(cls, path: str | Path) -> AutonomyLadder:
         return cls.from_spec(load_ai_driven_development(path))
 
     def level(self, rank: int) -> AutonomyLevel:
@@ -278,8 +278,7 @@ class AutonomyLadder:
         """
         available = available_evidence or set()
         requested_rank = _level_rank(requested_level)
-        if requested_rank < 0:
-            requested_rank = 0
+        requested_rank = max(requested_rank, 0)
         ceiling = self.role_ceiling(role)
         capped = min(requested_rank, ceiling)
 

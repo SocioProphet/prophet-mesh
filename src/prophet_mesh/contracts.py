@@ -47,7 +47,7 @@ class TrustKernel:
     audit: str
 
     @classmethod
-    def default(cls) -> "TrustKernel":
+    def default(cls) -> TrustKernel:
         return cls(
             identity="principal-bound identity and scoped delegation",
             policy="policy checks before capability execution",
@@ -78,7 +78,7 @@ class AgentBlueprint:
     premium_customization: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "AgentBlueprint":
+    def from_dict(cls, data: dict[str, Any]) -> AgentBlueprint:
         caps = [Capability(**item) for item in data.get("capabilities", [])]
         kernel_data = data.get("trust_kernel") or {}
         kernel = TrustKernel(**kernel_data) if kernel_data else TrustKernel.default()
@@ -97,7 +97,7 @@ class AgentBlueprint:
         )
 
     @classmethod
-    def from_yaml(cls, path: str | Path) -> "AgentBlueprint":
+    def from_yaml(cls, path: str | Path) -> AgentBlueprint:
         with Path(path).open("r", encoding="utf-8") as handle:
             data = yaml.safe_load(handle) or {}
         return cls.from_dict(data)

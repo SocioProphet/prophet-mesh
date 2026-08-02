@@ -45,7 +45,7 @@ class AgentManifest:
     path: str
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any], path: str | Path) -> "AgentManifest":
+    def from_dict(cls, data: dict[str, Any], path: str | Path) -> AgentManifest:
         return cls(
             id=str(data["id"]),
             kind=str(data["kind"]),

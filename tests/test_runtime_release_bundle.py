@@ -2,10 +2,10 @@ import copy
 from pathlib import Path
 
 from prophet_mesh.runtime_release_bundle import (
+    load_runtime_release_bundle,
+    load_runtime_release_contract,
     validate_runtime_release_bundle,
     validate_runtime_release_bundle_file,
-    load_runtime_release_contract,
-    load_runtime_release_bundle,
 )
 
 CONTRACT = load_runtime_release_contract()

@@ -101,7 +101,7 @@ def load_choir_spec(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle) or {}
     if not isinstance(data, dict):
-        raise ValueError("agent choir spec must be a YAML object")
+        raise TypeError("agent choir spec must be a YAML object")
     return data
 
 

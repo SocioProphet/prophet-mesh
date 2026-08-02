@@ -24,12 +24,12 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Callable, Iterable
+from datetime import UTC, datetime
 
 from .pkg import PKG
-from .pkg_ops import materialize, OpLog
+from .pkg_ops import OpLog, materialize
 
 # Loci that require a passing correctness receipt to reach the canonical view.
 GATED_LOCI = ("attested_fog", "burst_cloud")
@@ -51,7 +51,7 @@ def passing(*refs: str) -> Resolver:
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _canon(obj) -> str:

@@ -29,7 +29,7 @@ def load_router_request(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         data = json.load(handle)
     if not isinstance(data, dict):
-        raise ValueError("router request must be a JSON object")
+        raise TypeError("router request must be a JSON object")
     return data
 
 

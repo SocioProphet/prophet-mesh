@@ -105,7 +105,7 @@ async def chat_completions(request: Request) -> Any:
     _check_auth(request)
     try:
         body = await request.json()
-    except Exception:
+    except (json.JSONDecodeError, UnicodeDecodeError):
         raise HTTPException(status_code=400, detail="body must be JSON")
 
     messages = body.get("messages") or []
@@ -124,15 +124,17 @@ async def chat_completions(request: Request) -> Any:
     stream = bool(body.get("stream"))
 
     async def _proxy_stream():
-        async with httpx.AsyncClient(timeout=httpx.Timeout(300.0, connect=10.0)) as client:
-            async with client.stream("POST", url, json=upstream) as resp:
-                if resp.status_code >= 400:
-                    detail = (await resp.aread()).decode("utf-8", "replace")[:500]
-                    yield f"data: {json.dumps({'error': {'message': f'seat {seat}: {detail}', 'code': resp.status_code}})}\n\n".encode()
-                    yield b"data: [DONE]\n\n"
-                    return
-                async for chunk in resp.aiter_raw():
-                    yield chunk
+        async with (
+            httpx.AsyncClient(timeout=httpx.Timeout(300.0, connect=10.0)) as client,
+            client.stream("POST", url, json=upstream) as resp,
+        ):
+            if resp.status_code >= 400:
+                detail = (await resp.aread()).decode("utf-8", "replace")[:500]
+                yield f"data: {json.dumps({'error': {'message': f'seat {seat}: {detail}', 'code': resp.status_code}})}\n\n".encode()
+                yield b"data: [DONE]\n\n"
+                return
+            async for chunk in resp.aiter_raw():
+                yield chunk
 
     if stream:
         return StreamingResponse(_proxy_stream(), media_type="text/event-stream")

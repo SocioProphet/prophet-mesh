@@ -25,11 +25,12 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
+from collections.abc import Iterable
 from dataclasses import asdict
-from datetime import datetime, timezone
-from typing import Any, Iterable
+from datetime import UTC, datetime
+from typing import Any
 
-from .pkg import PKG, Node, Edge, Provenance, ExternalLink
+from .pkg import PKG, Edge, ExternalLink, Node, Provenance
 
 SPEC_VERSION = "2.0.0"
 
@@ -40,7 +41,7 @@ EdgeKey = tuple[str, str, str]  # (src, rel, dst)
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _canonical(obj: Any) -> str:
@@ -147,7 +148,7 @@ class EmittingPKG:
         self._edge_tags: dict[EdgeKey, set[str]] = {}
 
     @classmethod
-    def seeded(cls, self_id: str = "self", *, replica_id: str, locus: str = "local") -> "EmittingPKG":
+    def seeded(cls, self_id: str = "self", *, replica_id: str, locus: str = "local") -> EmittingPKG:
         """Fresh graph whose Self anchor is emitted as the genesis op, so the op-log
         is a *complete* source of truth (a fresh replica can materialize it and
         recover the anchor). external_kgs registration as an op is a later slice."""
@@ -272,7 +273,7 @@ def fold(ops: list[dict], self_id: str = "self") -> PKG:
     return materialize(ops, self_id=self_id)
 
 
-def merge(*logs: "OpLog | list[dict]") -> list[dict]:
+def merge(*logs: OpLog | list[dict]) -> list[dict]:
     """Union replicas' op-logs into one deduped, deterministically-ordered log (Slice 3).
 
     Commutative / associative / idempotent by construction (set union keyed by

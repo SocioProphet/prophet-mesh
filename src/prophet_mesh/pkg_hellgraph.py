@@ -18,7 +18,7 @@ re-emitting the same PKG collapses to the same atoms.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from prophet_mesh.pkg import PKG, Edge, ExternalLink, Node
@@ -45,7 +45,7 @@ def _promotion_state(inference_type: str) -> str:
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _created_at(captured_at: str) -> str:
