@@ -21,6 +21,6 @@ permissions:
 
 jobs:
   contribute:
-    uses: SocioProphet/git-ops-standards/.github/workflows/catalog-contribute.yml@main
+    uses: SocioProphet/git-ops-standards/.github/workflows/catalog-contribute.yml@e5ba73de9e4f92c54dddd320e5f9438c7421094e # git-ops-standards main
     secrets:
       catalog_token: ${{ secrets.CATALOG_CONTRIB_TOKEN }}
