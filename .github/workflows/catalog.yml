@@ -27,7 +27,7 @@ jobs:
     # Pinned to the branch tip of git-ops-standards' catalog-token-mint change
     # (feat/catalog-token-mint). RE-PIN to the post-merge commit SHA on main once
     # that PR lands so a mutable branch can't change what runs here.
-    uses: SocioProphet/git-ops-standards/.github/workflows/catalog-contribute.yml@f96c1e622b6e47c8729a10f17094fb95637f64ff # feat/catalog-token-mint (re-pin to main SHA post-merge)
+    uses: SocioProphet/git-ops-standards/.github/workflows/catalog-contribute.yml@250a5b2dc52499032f54fc28460f828f05987c74 # git-ops-standards main # feat/catalog-token-mint (re-pin to main SHA post-merge)
     # Forward the App credentials so the reusable workflow can mint the catalog
     # token in CI. `inherit` passes all org secrets; the reusable workflow only
     # reads CATALOG_APP_ID / CATALOG_APP_PRIVATE_KEY.
