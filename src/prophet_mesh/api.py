@@ -113,6 +113,28 @@ async def fleet_assay(request: Request) -> Any:
         raise HTTPException(status_code=400, detail=f"invalid assay: {exc}")
 
 
+@app.post("/v1/acquire/ingest")
+async def acquire_ingest(request: Request) -> Any:
+    """Land an acquired document into the mesh as EVIDENCE. Body: a governed-acquisition
+    "LandedRecord" (provenance + body + optional enrichment) as POSTed by the worker's
+    HttpSink. The record is validated against the acquisition contract, then persisted
+    content-addressed by provenance.contentHash; a rejected record (missing provenance
+    axes, auth-gated ToS) yields 400 and nothing is written."""
+    from .acquisition_intake import ingest_record
+
+    _check_auth(request)
+    try:
+        body = await request.json()
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        raise HTTPException(status_code=400, detail="body must be JSON")
+    if not isinstance(body, dict):
+        raise HTTPException(status_code=400, detail="body must be a JSON object")
+    try:
+        return ingest_record(body)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=f"invalid landed record: {exc}")
+
+
 @app.get("/v1/models")
 def list_models() -> dict[str, Any]:
     now = int(time.time())
