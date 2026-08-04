@@ -1,13 +1,15 @@
 """Fleet rollup builder — the data behind GET /fleet/rollup.
 
 Computes an AssayFleetSnapshot (rollup + rollout + standard summaries) by projecting
-real ReasoningAssay records through project() and aggregating with build_rollup. The
-ok/sad/bad distribution is therefore *computed*, not hardcoded: change the assays or
-the standards and the rollup changes.
+the fleet's real ReasoningAssay records through project() and aggregating with
+build_rollup. The ok/sad/bad distribution is *computed* from whatever verdicts the
+nodes have actually reported — not hardcoded.
 
-The per-node verdicts here are a seeded demo fleet (there is no live assay store yet);
-swap `_demo_fleet()` for a real store to make the endpoint fully live. The standards are
-the real committed calibrations (narration-fidelity, nl-lexical-baseline, deployed-nli).
+Verdicts live in a persistent AssayStore (append-only, latest-per-node). Nodes ingest
+via `record_node_assay` (POST /fleet/assay); the rollup folds the store on read. On a
+fresh store the fleet is bootstrapped once with a representative demo fleet so the
+dashboard is never blank; real POSTed verdicts supersede seed nodes as they arrive.
+The standards are the real committed calibrations.
 """
 from __future__ import annotations
 
@@ -16,8 +18,9 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from .assay import build_rollup, derived_f1, is_calibrated
+from .assay import build_rollup, derived_f1, is_calibrated, project, validate_reasoning_assay
 from .assay_calibrate import interpret_kappa
+from .assay_store import AssayStore, default_store
 
 REPO = Path(__file__).resolve().parents[2]
 EXAMPLES = REPO / "examples"
@@ -96,11 +99,35 @@ def _standard_summary(std: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def build_fleet_snapshot(now: datetime | None = None) -> dict[str, Any]:
-    """Assemble the AssayFleetSnapshot the dashboard consumes."""
+def _bootstrap(store: AssayStore) -> None:
+    """Seed an empty store once with a representative fleet so the surface isn't blank."""
+    for i, assay in enumerate(_demo_fleet(), start=1):
+        store.record(f"node-{i:02d}", assay)
+
+
+def record_node_assay(node_ref: str, assay: dict[str, Any], store: AssayStore | None = None) -> dict[str, Any]:
+    """Ingest one node's verdict into the store (the POST /fleet/assay path).
+
+    Validates the assay, appends it, and returns the state it projects to — so a node
+    learns immediately whether its verdict reached ok/sad/bad."""
+    result = validate_reasoning_assay(assay)
+    if not result.valid:
+        raise ValueError("; ".join(result.errors))
+    store = store or default_store()
+    store.record(node_ref, assay)
+    return {"nodeRef": node_ref, "projectedState": project(assay, load_standards())}
+
+
+def build_fleet_snapshot(store: AssayStore | None = None, now: datetime | None = None) -> dict[str, Any]:
+    """Assemble the AssayFleetSnapshot the dashboard consumes from the live store."""
     now = now or datetime.now(UTC)
+    store = store or default_store()
+    # A fleet rollup needs >= 2 nodes; bootstrap a near-empty store so the dashboard is
+    # never blank. In a real multi-node deployment this never triggers.
+    if store.count() < 2:
+        _bootstrap(store)
     standards = load_standards()
-    assays = _demo_fleet()
+    assays = list(store.current().values())
 
     window = {"from": (now - timedelta(hours=1)).isoformat(), "to": now.isoformat()}
     rollup = build_rollup(
