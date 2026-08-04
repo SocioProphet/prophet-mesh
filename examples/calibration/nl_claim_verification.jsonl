@@ -1,0 +1,32 @@
+{"id": "s01", "category": "clean-support", "claim": "The server returned a 200 status code.", "evidence": "The request completed and the server returned a 200 status code.", "gold": "supported"}
+{"id": "s02", "category": "clean-support", "claim": "The deployment finished successfully.", "evidence": "The deployment finished successfully at 14:03.", "gold": "supported"}
+{"id": "s03", "category": "clean-support", "claim": "The cache hit rate was 92 percent.", "evidence": "Metrics showed the cache hit rate was 92 percent.", "gold": "supported"}
+{"id": "s04", "category": "reorder-support", "claim": "The build passed all tests.", "evidence": "All tests passed during the build.", "gold": "supported"}
+{"id": "s05", "category": "clean-support", "claim": "The API latency stayed under 200 milliseconds.", "evidence": "Observed API latency stayed under 200 milliseconds throughout.", "gold": "supported"}
+{"id": "s06", "category": "clean-support", "claim": "Three nodes joined the cluster.", "evidence": "Three nodes joined the cluster during the window.", "gold": "supported"}
+{"id": "s07", "category": "paraphrase-support", "claim": "The rollout completed without incident.", "evidence": "The release went out cleanly with no problems reported.", "gold": "supported"}
+{"id": "s08", "category": "paraphrase-support", "claim": "Users experienced faster page loads.", "evidence": "Page rendering time dropped noticeably for visitors.", "gold": "supported"}
+{"id": "s09", "category": "paraphrase-support", "claim": "The database remained available.", "evidence": "No downtime was recorded for the datastore.", "gold": "supported"}
+{"id": "s10", "category": "clean-support", "claim": "The certificate was renewed.", "evidence": "The certificate was renewed on schedule.", "gold": "supported"}
+{"id": "s11", "category": "reorder-support", "claim": "Memory usage peaked at 4 gigabytes.", "evidence": "Peak memory usage reached 4 gigabytes.", "gold": "supported"}
+{"id": "s12", "category": "clean-support", "claim": "The queue drained completely.", "evidence": "The queue drained completely before shutdown.", "gold": "supported"}
+{"id": "s13", "category": "clean-support", "claim": "Two verifiers agreed on the verdict.", "evidence": "Two verifiers agreed on the verdict independently.", "gold": "supported"}
+{"id": "s14", "category": "clean-support", "claim": "The signature validated correctly.", "evidence": "The signature validated correctly against the key.", "gold": "supported"}
+{"id": "s15", "category": "reorder-support", "claim": "Throughput increased after the change.", "evidence": "Following the change, throughput increased.", "gold": "supported"}
+{"id": "s16", "category": "paraphrase-support", "claim": "The incident was resolved quickly.", "evidence": "Engineers restored service in a short time.", "gold": "supported"}
+{"id": "r01", "category": "negation-refute", "claim": "The server was reachable.", "evidence": "The server was not reachable during the outage.", "gold": "refuted"}
+{"id": "r02", "category": "negation-refute", "claim": "The tests passed.", "evidence": "The tests did not pass.", "gold": "refuted"}
+{"id": "r03", "category": "entity-swap-refute", "claim": "Node A promoted the standard.", "evidence": "Node B promoted the standard.", "gold": "refuted"}
+{"id": "r04", "category": "numeric-refute", "claim": "The latency was 500 milliseconds.", "evidence": "The latency was 50 milliseconds.", "gold": "refuted"}
+{"id": "r05", "category": "absent-refute", "claim": "The firewall blocked the request.", "evidence": "The load balancer distributed traffic evenly.", "gold": "refuted"}
+{"id": "r06", "category": "contradiction-refute", "claim": "The rollout succeeded.", "evidence": "The rollout failed.", "gold": "refuted"}
+{"id": "r07", "category": "entity-swap-refute", "claim": "The primary region stayed online.", "evidence": "The secondary region stayed online.", "gold": "refuted"}
+{"id": "r08", "category": "negation-refute", "claim": "The data was encrypted.", "evidence": "The data was never encrypted at rest.", "gold": "refuted"}
+{"id": "r09", "category": "numeric-refute", "claim": "Five services restarted.", "evidence": "Two services restarted.", "gold": "refuted"}
+{"id": "r10", "category": "absent-refute", "claim": "The audit log recorded the event.", "evidence": "The dashboard displayed current metrics.", "gold": "refuted"}
+{"id": "r11", "category": "contradiction-refute", "claim": "The verdict was ok.", "evidence": "The verdict was bad.", "gold": "refuted"}
+{"id": "r12", "category": "negation-refute", "claim": "The node rejoined the mesh.", "evidence": "The node did not rejoin the mesh.", "gold": "refuted"}
+{"id": "r13", "category": "entity-swap-refute", "claim": "The calibrated standard gated admission.", "evidence": "The uncalibrated standard gated admission.", "gold": "refuted"}
+{"id": "r14", "category": "absent-refute", "claim": "The scheduler paused new jobs.", "evidence": "The report summarized quarterly revenue.", "gold": "refuted"}
+{"id": "r15", "category": "contradiction-refute", "claim": "The connection stayed open.", "evidence": "The connection dropped repeatedly.", "gold": "refuted"}
+{"id": "r16", "category": "numeric-refute", "claim": "The score was 90 percent.", "evidence": "The score was 20 percent.", "gold": "refuted"}

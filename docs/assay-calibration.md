@@ -69,7 +69,36 @@ PY
 
 The gold here is **synthetic and deterministic** (machine-authored structural claims),
 not human- or LLM-judge labels over natural-language claims. F1 = 1.0 reflects a
-clean-room eval the verifier is built to pass; a natural-language calibration set would
-give a more conservative number. No such labelled set exists in the estate yet — creating
-one is the next step to a production-grade standard. This standard is real and
-reproducible, but its scope is the CFR structural-claim task.
+clean-room eval the verifier is built to pass; a natural-language calibration set gives a
+more conservative number — see below.
+
+---
+
+# A natural-language standard (`nl-lexical-baseline:v1`)
+
+The estate had no natural-language supported/refuted corpus. `examples/calibration/nl_claim_verification.jsonl`
+is one: **32 balanced items** (16 supported / 16 refuted) with deliberate hard cases —
+paraphrases, negations, entity swaps, and numeric contradictions.
+
+`prophet_mesh.nl_verifier` is a **baseline** lexical-entailment verifier: it supports a claim
+when its content words are mostly covered by the evidence and polarity agrees. It is naive by
+design — it misses paraphrases (false negatives) and is fooled by high-overlap entity swaps and
+numeric contradictions (false positives).
+
+Calibrated over the corpus (positive = `supported`):
+
+```
+truePositive 12 · falsePositive 6 · trueNegative 10 · falseNegative 4
+→ F1 0.706 · precision 0.667 · recall 0.75 · kappa 0.375 (fair)
+→ calibrated (just clears the 0.6 bar)
+```
+
+This is the point of the framework in one number: a mediocre verifier that *barely* earns
+`calibrated`. A verdict riding on it can reach `ok`, but the fleet's `AssayRollup` will show it
+sitting near the calibration floor — visibly weaker than a claim behind `narration-fidelity`.
+The two committed standards bracket the reliability spectrum: **1.0 (synthetic-perfect)** and
+**0.71 (real, fair)**.
+
+The next step to a *production* NL standard is a larger, human- or LLM-judged corpus and a real
+verifier (not this lexical baseline); the pipeline that turns either into a measured AssayStandard
+is already here.
