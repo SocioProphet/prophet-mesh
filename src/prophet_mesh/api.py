@@ -84,6 +84,16 @@ def healthz() -> dict[str, Any]:
     return {"status": "ok", "seats": sorted(BACKENDS.keys())}
 
 
+@app.get("/fleet/rollup")
+def fleet_rollup() -> dict[str, Any]:
+    """The cloud-mesh Assay rollup the fleet dashboard consumes: verdict distribution,
+    calibration drift, and the standard rollout in flight. Computed by projecting the
+    fleet's ReasoningAssay records through the Assay projection (not a static blob)."""
+    from .assay_fleet import build_fleet_snapshot
+
+    return build_fleet_snapshot()
+
+
 @app.get("/v1/models")
 def list_models() -> dict[str, Any]:
     now = int(time.time())
