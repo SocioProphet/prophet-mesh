@@ -84,6 +84,35 @@ def healthz() -> dict[str, Any]:
     return {"status": "ok", "seats": sorted(BACKENDS.keys())}
 
 
+@app.get("/fleet/rollup")
+def fleet_rollup() -> dict[str, Any]:
+    """The cloud-mesh Assay rollup the fleet dashboard consumes: verdict distribution,
+    calibration drift, and the standard rollout in flight. Computed by projecting the
+    fleet's persisted ReasoningAssay records through the Assay projection (not a static blob)."""
+    from .assay_fleet import build_fleet_snapshot
+
+    return build_fleet_snapshot()
+
+
+@app.post("/fleet/assay")
+async def fleet_assay(request: Request) -> Any:
+    """A node reports its verdict. Body: {"nodeRef": "...", "assay": <ReasoningAssay>}.
+    The assay is validated, persisted (latest-per-node), and its projected state returned."""
+    from .assay_fleet import record_node_assay
+
+    try:
+        body = await request.json()
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        raise HTTPException(status_code=400, detail="body must be JSON")
+    node_ref, assay = body.get("nodeRef"), body.get("assay")
+    if not node_ref or not isinstance(assay, dict):
+        raise HTTPException(status_code=400, detail="body must be {nodeRef, assay}")
+    try:
+        return record_node_assay(node_ref, assay)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=f"invalid assay: {exc}")
+
+
 @app.get("/v1/models")
 def list_models() -> dict[str, Any]:
     now = int(time.time())

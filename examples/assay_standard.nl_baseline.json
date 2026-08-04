@@ -1,0 +1,26 @@
+{
+  "id": "urn:srcos:assay-standard:nl-lexical-baseline:v1",
+  "type": "AssayStandard",
+  "specVersion": "2.0.0",
+  "verifierId": "urn:srcos:verifier:nl-lexical-baseline",
+  "version": "v1",
+  "confusionMatrix": {
+    "truePositive": 12,
+    "falsePositive": 6,
+    "trueNegative": 10,
+    "falseNegative": 4
+  },
+  "metrics": {
+    "f1": 0.7059,
+    "precision": 0.6667,
+    "recall": 0.75
+  },
+  "interRaterAgreement": {
+    "kappa": 0.375,
+    "interpretation": "fair"
+  },
+  "sampleSize": 32,
+  "calibrationThreshold": 0.6,
+  "calibrated": true,
+  "measuredAt": "2026-07-05T00:00:00Z"
+}
