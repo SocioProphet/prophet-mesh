@@ -1,0 +1,26 @@
+{
+  "id": "urn:srcos:assay-standard:narration-fidelity:cfr-eval-001",
+  "type": "AssayStandard",
+  "specVersion": "2.0.0",
+  "verifierId": "urn:srcos:verifier:narration-fidelity",
+  "version": "cfr-eval-001",
+  "confusionMatrix": {
+    "truePositive": 8,
+    "falsePositive": 0,
+    "trueNegative": 34,
+    "falseNegative": 0
+  },
+  "metrics": {
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0
+  },
+  "interRaterAgreement": {
+    "kappa": 1.0,
+    "interpretation": "almost-perfect"
+  },
+  "sampleSize": 42,
+  "calibrationThreshold": 0.6,
+  "calibrated": true,
+  "measuredAt": "2026-07-05T00:00:00Z"
+}

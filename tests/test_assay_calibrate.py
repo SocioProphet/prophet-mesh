@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import math
+from pathlib import Path
 
 import pytest
 
@@ -13,6 +15,8 @@ from prophet_mesh.assay_calibrate import (
     confusion_from_labelled,
     interpret_kappa,
 )
+
+REPO = Path(__file__).resolve().parents[1]
 
 
 def _labelled(tp, fp, tn, fn):
@@ -66,6 +70,35 @@ def test_weak_verifier_is_not_calibrated():
     assert std["metrics"]["f1"] < 0.6
     assert std["calibrated"] is False
     assert validate_assay_standard(std).valid is True       # honest: low F1, flag False, consistent
+
+
+def test_refutation_detector_framing():
+    # positive='refuted': a verifier whose job is catching lies. Abstentions (mapped
+    # to the non-positive label) belong in the negative class, not counted as support.
+    items = (
+        [{"predicted": "refuted", "gold": "refuted"}] * 8      # caught lies (TP)
+        + [{"predicted": "supported", "gold": "supported"}] * 34  # correctly not flagged (TN)
+    )
+    m = confusion_from_labelled(items, positive="refuted")
+    assert m == {"truePositive": 8, "falsePositive": 0, "trueNegative": 34, "falseNegative": 0}
+    std = calibrate("urn:srcos:verifier:narration-fidelity", "cfr-eval-001", items,
+                    positive="refuted", measured_at="2026-07-05T00:00:00Z")
+    assert std["metrics"]["f1"] == 1.0
+    assert std["calibrated"] is True
+    assert validate_assay_standard(std).valid is True
+
+
+def test_committed_real_standard_is_sound_and_usable():
+    # the standard derived from the real SP-TRACE-CFR verifier must stay valid and usable
+    std = json.loads((REPO / "examples" / "assay_standard.narration_fidelity.json").read_text())
+    assert validate_assay_standard(std).valid is True
+    assert std["calibrated"] is True
+    assay = {
+        "method": "computed", "binding": "inline",
+        "verifier": {"judgment": "supported", "calibrationRef": std["id"]},
+        "authority": {"integrityVerified": True},
+    }
+    assert project(assay, {std["id"]: std}) == "ok"
 
 
 def test_calibrated_standard_round_trips_into_projection():

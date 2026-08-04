@@ -42,18 +42,24 @@ def _label(value: Any) -> str:
     raise ValueError(f"unrecognised label {value!r} (want supported/refuted)")
 
 
-def confusion_from_labelled(items: Sequence[dict[str, Any]]) -> dict[str, int]:
-    """Confusion matrix with 'supported' as the positive class."""
+def confusion_from_labelled(items: Sequence[dict[str, Any]], positive: str = POSITIVE) -> dict[str, int]:
+    """Confusion matrix around ``positive`` (default 'supported').
+
+    A refutation-detecting verifier (whose discriminative task is catching lies)
+    is best calibrated with positive='refuted' — abstentions then fall correctly
+    into the negative (not-refuted) class rather than being miscounted as support.
+    """
     if not items:
         raise ValueError("cannot calibrate on an empty labelled set")
     m = {"truePositive": 0, "falsePositive": 0, "trueNegative": 0, "falseNegative": 0}
     for it in items:
-        pred, gold = _label(it["predicted"]), _label(it["gold"])
-        if pred == POSITIVE and gold == POSITIVE:
+        pred_pos = _label(it["predicted"]) == positive
+        gold_pos = _label(it["gold"]) == positive
+        if pred_pos and gold_pos:
             m["truePositive"] += 1
-        elif pred == POSITIVE and gold == NEGATIVE:
+        elif pred_pos and not gold_pos:
             m["falsePositive"] += 1
-        elif pred == NEGATIVE and gold == NEGATIVE:
+        elif not pred_pos and not gold_pos:
             m["trueNegative"] += 1
         else:
             m["falseNegative"] += 1
@@ -95,12 +101,13 @@ def calibrate(
     version: str,
     labelled: Sequence[dict[str, Any]],
     *,
+    positive: str = POSITIVE,
     threshold: float = DEFAULT_CALIBRATION_THRESHOLD,
     measured_at: str | None = None,
 ) -> dict[str, Any]:
     """Emit an AssayStandard from a verifier's labelled outputs. Every number is
     derived from the labelled set; ``calibrated`` is (F1 >= threshold), not asserted."""
-    matrix = confusion_from_labelled(labelled)
+    matrix = confusion_from_labelled(labelled, positive)
     tp, fp, fn = matrix["truePositive"], matrix["falsePositive"], matrix["falseNegative"]
     f1 = derived_f1(matrix)
     precision = tp / (tp + fp) if (tp + fp) else 0.0
